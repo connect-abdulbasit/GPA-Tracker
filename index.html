@@ -11,33 +11,32 @@
 
 <body>
     <nav>
-        <h1>Grade Point Average (GPA) Tracker: </h1><span> Your Academic Performance Analyzer.</span>
+        <h1>GPA Tracker</h1>
+        <span>Your Academic Performance Analyzer</span>
     </nav>
     <div class="container">
-        <div class="welcome ">
-            <h1 class="w">Welcome:</h1>
-            <p class="w">Kese ana hoa yaha pr, lgta ha number pata chale ha kisi paper ke &#128517</p>
-            <button class="w" id="startedBtn">Get Started</button>
+        <div class="welcome">
+            <h1>Welcome!</h1>
+            <p>Calculate your GPA effortlessly. Let's begin!</p>
+            <button id="startButton">Get Started</button>
         </div>
         <div class="form hide">
-            <h1>Calculate your GPA:</h1> 
+            <h1>Calculate Your GPA</h1>
             <form onsubmit="return false">
                 <div class="course">
                     <div class="nthCourse">
                         <label for="num">Course 1</label>
-                        <input type="number" step="0.01" class="num"  placeholder="Total Weightage">
-                        <input type="number"  class="num" placeholder="Credit Hours">
+                        <input type="number" step="0.01" class="num" placeholder="Total Weightage">
+                        <input type="number" class="num" placeholder="Credit Hours">
                     </div>
                 </div>
                 <div class="add">
-                    <div class="plus">
-                        +
-                    </div>
+                    <div class="plus">+</div>
                 </div>
                 <div class="result"></div>
                 <div class="btn">
-                <button type="submit" id="Calculate">Calculate</button>
-                <button id="switch">GPA/CrdtHr</button>
+                    <button type="submit" id="calculateButton">Calculate</button>
+                    <button id="toggleButton">GPA/CrdtHr</button>
                 </div>
             </form>
         </div>
