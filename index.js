@@ -10,6 +10,7 @@ let count = 2;
 let isGPAView = false;
 
 const GPA = (value) => {
+  value = Math.round(value);
   if (!value) return -1;
   if (value >= 86) return 4;
   if (value >= 82) return 3.66;
