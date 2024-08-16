@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPA Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="icon.jpeg">
+</head>
+
+<body>
+    <nav>
+        <h1>GPA Tracker</h1>
+        <span>Your Academic Performance Analyzer</span>
+    </nav>
+    <div class="container">
+        <div class="welcome">
+            <h1>Welcome!</h1>
+            <p>Calculate your GPA effortlessly. Let's begin!</p>
+            <button id="startButton">Get Started</button>
+        </div>
+        <div class="form hide">
+            <h1>Calculate Your GPA</h1>
+            <form onsubmit="return false">
+                <div class="course">
+                    <div class="nthCourse">
+                        <label for="num">Course 1</label>
+                        <input type="number" step="0.01" class="num" placeholder="Total Weightage">
+                        <input type="number" class="num" placeholder="Credit Hours">
+                    </div>
+                </div>
+                <div class="add">
+                    <div class="plus">+</div>
+                </div>
+                <div class="result"></div>
+                <div class="btn">
+                    <button type="submit" id="calculateButton">Calculate</button>
+                    <button id="toggleButton">GPA/CrdtHr</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
