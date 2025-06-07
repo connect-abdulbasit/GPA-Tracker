@@ -65,7 +65,8 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
       router.refresh()
     } catch (error) {
       toast.error("Failed to add course")
-      console.error(error)
+      // Consider using a proper logging service instead
+      // console.error(error)
     } finally {
       setLoading(false)
     }

@@ -1,8 +1,0 @@
-{
-  "/_not-found/page": "/_not-found",
-  "/page": "/",
-  "/(dashboard)/dashboard/page": "/dashboard",
-  "/(dashboard)/grade-chart/page": "/grade-chart",
-  "/(dashboard)/semesters/[id]/page": "/semesters/[id]",
-  "/(dashboard)/semesters/page": "/semesters"
-}
