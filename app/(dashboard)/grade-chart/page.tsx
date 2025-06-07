@@ -1,0 +1,84 @@
+import { gradeScale } from "@/lib/gpa-calculations"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { GraduationCap, Info } from "lucide-react"
+
+export default function GradeChartPage() {
+  return (
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Grade Chart</h1>
+        <p className="text-muted-foreground">Reference chart for grade-to-GPA conversion on a 4.0 scale</p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center space-x-2">
+            <GraduationCap className="h-5 w-5" />
+            <CardTitle>Standard 4.0 GPA Scale</CardTitle>
+          </div>
+          <CardDescription>Use this reference when entering your course grades</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {gradeScale.map((grade) => (
+              <div key={grade.grade} className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center space-x-3">
+                  <Badge
+                    variant={grade.gpa >= 3.5 ? "default" : grade.gpa >= 3.0 ? "secondary" : "destructive"}
+                    className="text-lg font-bold min-w-[3rem] justify-center"
+                  >
+                    {grade.grade}
+                  </Badge>
+                  <div>
+                    <div className="font-semibold">{grade.gpa.toFixed(1)}</div>
+                    <div className="text-sm text-muted-foreground">{grade.range}%</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-center space-x-2">
+            <Info className="h-5 w-5" />
+            <CardTitle>GPA Performance Levels</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <Badge className="min-w-[5rem] justify-center">3.5 - 4.0</Badge>
+                <span className="font-medium">Excellent</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Badge variant="secondary" className="min-w-[5rem] justify-center">
+                  3.0 - 3.4
+                </Badge>
+                <span className="font-medium">Good</span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <Badge variant="outline" className="min-w-[5rem] justify-center">
+                  2.5 - 2.9
+                </Badge>
+                <span className="font-medium">Average</span>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Badge variant="destructive" className="min-w-[5rem] justify-center">
+                  Below 2.5
+                </Badge>
+                <span className="font-medium">Needs Improvement</span>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
