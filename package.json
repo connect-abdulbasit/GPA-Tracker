@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:reset": "npm run db:migrate",
+    "db:seed": "tsx scripts/seed.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.21.0",
@@ -43,6 +46,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^16.5.0",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.513.0",
@@ -61,12 +65,13 @@
     "zod": "^3.25.56"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^22.15.30",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.7.0",
     "typescript": "^5"
   }
 }
