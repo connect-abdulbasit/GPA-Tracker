@@ -22,6 +22,7 @@ package-lock.json
 /build
 /dist
 /.next/
+.next
 /out/
 
 # Debug logs

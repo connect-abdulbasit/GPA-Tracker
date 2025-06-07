@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server"
-import { supabase } from "@/lib/supabase"
+import { Course, supabase } from "@/lib/supabase"
 import { calculateSGPA, calculateCGPA } from "@/lib/gpa-calculations"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TrendingUp, BookOpen, GraduationCap, Target } from "lucide-react"
@@ -26,7 +26,7 @@ export default async function DashboardPage() {
   const cgpa = calculateCGPA(semesters)
   const totalCourses = semesters.reduce((sum, sem) => sum + sem.courses.length, 0)
   const totalCredits = semesters.reduce(
-    (sum, sem) => sum + sem.courses.reduce((courseSum, course) => courseSum + course.credit_hours, 0),
+    (sum, sem) => sum + sem.courses.reduce((courseSum: number, course: Course) => courseSum + course.credit_hours, 0),
     0,
   )
 
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
   }))
 
   const allCourses = semesters.flatMap((sem) =>
-    sem.courses.map((course) => ({
+    sem.courses.map((course: Course) => ({
       ...course,
       semesterName: sem.name,
     })),

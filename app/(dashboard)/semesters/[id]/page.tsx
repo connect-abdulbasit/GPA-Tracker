@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server"
-import { supabase } from "@/lib/supabase"
+import { supabase, type Course } from "@/lib/supabase"
 import { calculateSGPA } from "@/lib/gpa-calculations"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -23,20 +23,26 @@ async function getSemesterDetails(semesterId: string, userId: string) {
   return semester
 }
 
+interface PageProps {
+  params: Promise<{
+    id: string
+  }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
+
 export default async function SemesterDetailsPage({
   params,
-}: {
-  params: { id: string }
-}) {
+}: PageProps) {
+  const resolvedParams = await params
   const { userId } = await auth()
-  const semester = await getSemesterDetails(params.id, userId!)
+  const semester = await getSemesterDetails(resolvedParams.id, userId!)
 
   if (!semester) {
     notFound()
   }
 
   const sgpa = calculateSGPA(semester.courses)
-  const totalCredits = semester.courses.reduce((sum, course) => sum + course.credit_hours, 0)
+  const totalCredits = semester.courses.reduce((sum: number, course: Course) => sum + course.credit_hours, 0)
 
   return (
     <div className="space-y-8">
@@ -105,7 +111,7 @@ export default async function SemesterDetailsPage({
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {semester.courses.map((course) => (
+          {semester.courses.map((course: Course) => (
             <CourseCard key={course.id} course={course} />
           ))}
         </div>
