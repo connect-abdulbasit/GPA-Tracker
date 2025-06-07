@@ -1,14 +1,17 @@
+import { usersTable } from '@/src/db/schema'
 import { supabase } from './supabase'
+// import { db } from '@/src/db'
+import { eq } from 'drizzle-orm'
 
 export interface DatabaseUser {
   id: string // Clerk user ID
   email: string
-  first_name?: string
-  last_name?: string
-  full_name?: string
-  image_url?: string
-  created_at?: string
-  updated_at?: string
+  first_name: string | null
+  last_name: string | null
+  full_name: string | null
+  image_url: string | null
+  created_at: Date
+  updated_at: Date
 }
 
 export class DatabaseManager {
@@ -19,25 +22,32 @@ export class DatabaseManager {
     lastName?: string | null
     fullName?: string | null
     imageUrl?: string
+    updatedAt?: Date
+    createdAt?: Date
   }): Promise<DatabaseUser | null> {
     try {
-      const userData = {
-        id: clerkUser.id,
-        email: clerkUser.emailAddresses[0]?.emailAddress || '',
-        first_name: clerkUser.firstName || null,
-        last_name: clerkUser.lastName || null,
-        full_name: clerkUser.fullName || null,
-        image_url: clerkUser.imageUrl || null,
-      }
+      const email = clerkUser.emailAddresses[0]?.emailAddress || ''
+      
+      // // Check if user with email already exists
+      // const existingUser = await db.select().from(usersTable).where(eq(usersTable.email, email))
+      // console.log(existingUser)
+      // if (existingUser.length > 0) {
+      //   return existingUser[0]
+      // }
 
-      const { data, error } = await supabase
-        .from('users')
-        .upsert([userData], { onConflict: 'id' })
-        .select()
-        .single()
+      // const userData = {
+      //   id: clerkUser.id,
+      //   email: email,
+      //   first_name: clerkUser.firstName || null,
+      //   last_name: clerkUser.lastName || null,
+      //   full_name: clerkUser.fullName || null,
+      //   image_url: clerkUser.imageUrl || null,
+      // }
 
-      if (error) throw error
-      return data
+      // const user = await db.insert(usersTable).values(userData).returning()
+
+      // return user[0]
+      return null
     } catch (error) {
       console.error('Error creating/updating user:', error)
       return null
