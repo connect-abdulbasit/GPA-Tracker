@@ -9,7 +9,9 @@
     "lint": "next lint",
     "db:migrate": "tsx scripts/migrate.ts",
     "db:reset": "npm run db:migrate",
-    "db:seed": "tsx scripts/seed.ts"
+    "db:seed": "tsx scripts/seed.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.21.0",
@@ -47,11 +49,13 @@
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
+    "drizzle-orm": "^0.44.2",
     "embla-carousel-react": "^8.6.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.513.0",
     "next": "^15.2.3",
     "next-themes": "^0.4.6",
+    "postgres": "^3.4.7",
     "react": "^18",
     "react-day-picker": "^9.7.0",
     "react-dom": "^18",
@@ -69,9 +73,10 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.4.20",
+    "drizzle-kit": "^0.31.1",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
-    "tsx": "^4.7.0",
+    "tsx": "^4.19.4",
     "typescript": "^5"
   }
 }
