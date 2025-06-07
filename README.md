@@ -1,4 +1,4 @@
-# GPA Calculator
+# GPA Tracker
 
 Welcome to the **GPA Calculator** web application! This tool is designed to help students calculate their GPA (Grade Point Average) effortlessly. The app features an intuitive and user-friendly interface that makes it easy to input course details and get instant GPA results.
 
