@@ -2,6 +2,7 @@ import { usersTable } from '@/src/db/schema'
 import { supabase } from './supabase'
 // import { db } from '@/src/db'
 import { eq } from 'drizzle-orm'
+import { db } from '@/src/db'
 
 export interface DatabaseUser {
   id: string // Clerk user ID
@@ -27,27 +28,26 @@ export class DatabaseManager {
   }): Promise<DatabaseUser | null> {
     try {
       const email = clerkUser.emailAddresses[0]?.emailAddress || ''
-      
-      // // Check if user with email already exists
-      // const existingUser = await db.select().from(usersTable).where(eq(usersTable.email, email))
-      // console.log(existingUser)
-      // if (existingUser.length > 0) {
-      //   return existingUser[0]
-      // }
+      console.log(email)
+      // Check if user with email already exists
+      const existingUser = await db.select().from(usersTable).where(eq(usersTable.email, email))
+      console.log(existingUser)
+      if (existingUser.length > 0) {
+        return existingUser[0]
+      }
 
-      // const userData = {
-      //   id: clerkUser.id,
-      //   email: email,
-      //   first_name: clerkUser.firstName || null,
-      //   last_name: clerkUser.lastName || null,
-      //   full_name: clerkUser.fullName || null,
-      //   image_url: clerkUser.imageUrl || null,
-      // }
+      const userData = {
+        id: clerkUser.id,
+        email: email,
+        first_name: clerkUser.firstName || null,
+        last_name: clerkUser.lastName || null,
+        full_name: clerkUser.fullName || null,
+        image_url: clerkUser.imageUrl || null,
+      }
 
-      // const user = await db.insert(usersTable).values(userData).returning()
+      const user = await db.insert(usersTable).values(userData).returning()
 
-      // return user[0]
-      return null
+      return user[0]
     } catch (error) {
       console.error('Error creating/updating user:', error)
       return null
