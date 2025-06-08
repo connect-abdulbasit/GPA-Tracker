@@ -14,7 +14,7 @@
     "db:push": "drizzle-kit push"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.21.0",
+    "@clerk/nextjs": "^4.31.8",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",
