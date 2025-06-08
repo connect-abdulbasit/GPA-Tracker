@@ -1,47 +1,69 @@
 import { auth } from "@clerk/nextjs/server"
-import { Course, supabase } from "@/lib/supabase"
-import { calculateSGPA, calculateCGPA } from "@/lib/gpa-calculations"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TrendingUp, BookOpen, GraduationCap, Target } from "lucide-react"
 import { GPATrendChart } from "@/components/gpa-trend-chart"
 import { CourseGPAChart } from "@/components/course-gpa-chart"
 
-async function getDashboardData(userId: string) {
-  const { data: semesters } = await supabase
-    .from("semesters")
-    .select(`
-      *,
-      courses (*)
-    `)
-    .eq("user_id", userId)
-    .order("created_at", { ascending: true })
+// Dummy data
+const dummySemesters = [
+  {
+    id: "1",
+    name: "Fall 2024",
+    user_id: "user_123",
+    created_at: new Date(),
+    updated_at: new Date(),
+    courses: [
+      {
+        id: "1",
+        name: "Introduction to Computer Science",
+        credit_hours: 3,
+        gpa: 3.7,
+        semester_id: "1",
+        user_id: "user_123",
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: "2",
+        name: "Data Structures",
+        credit_hours: 4,
+        gpa: 3.5,
+        semester_id: "1",
+        user_id: "user_123",
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ],
+  },
+  {
+    id: "2",
+    name: "Spring 2024",
+    user_id: "user_123",
+    created_at: new Date(),
+    updated_at: new Date(),
+    courses: [
+      {
+        id: "3",
+        name: "Algorithms",
+        credit_hours: 4,
+        gpa: 3.8,
+        semester_id: "2",
+        user_id: "user_123",
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ],
+  },
+];
 
-  return semesters || []
+async function getDashboardData(userId: string) {
+  // Return dummy data instead of database query
+  return dummySemesters;
 }
 
 export default async function DashboardPage() {
   const { userId } = await auth()
   const semesters = await getDashboardData(userId!)
-
-  const cgpa = calculateCGPA(semesters)
-  const totalCourses = semesters.reduce((sum, sem) => sum + sem.courses.length, 0)
-  const totalCredits = semesters.reduce(
-    (sum, sem) => sum + sem.courses.reduce((courseSum: number, course: Course) => courseSum + course.credit_hours, 0),
-    0,
-  )
-
-  const semesterData = semesters.map((semester) => ({
-    name: semester.name,
-    sgpa: calculateSGPA(semester.courses),
-    courses: semester.courses.length,
-  }))
-
-  const allCourses = semesters.flatMap((sem) =>
-    sem.courses.map((course: Course) => ({
-      ...course,
-      semesterName: sem.name,
-    })),
-  )
 
   return (
     <div className="space-y-8">
@@ -57,7 +79,7 @@ export default async function DashboardPage() {
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{cgpa.toFixed(2)}</div>
+            <div className="text-2xl font-bold">3.85</div>
             <p className="text-xs text-muted-foreground">Out of 4.0 scale</p>
           </CardContent>
         </Card>
@@ -68,7 +90,7 @@ export default async function DashboardPage() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalCourses}</div>
+            <div className="text-2xl font-bold">12</div>
             <p className="text-xs text-muted-foreground">Across {semesters.length} semesters</p>
           </CardContent>
         </Card>
@@ -79,7 +101,7 @@ export default async function DashboardPage() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalCredits}</div>
+            <div className="text-2xl font-bold">36</div>
             <p className="text-xs text-muted-foreground">Total completed</p>
           </CardContent>
         </Card>
@@ -90,9 +112,7 @@ export default async function DashboardPage() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {cgpa >= 3.5 ? "Excellent" : cgpa >= 3.0 ? "Good" : cgpa >= 2.5 ? "Average" : "Needs Improvement"}
-            </div>
+            <div className="text-2xl font-bold">Excellent</div>
             <p className="text-xs text-muted-foreground">Academic standing</p>
           </CardContent>
         </Card>
@@ -105,7 +125,7 @@ export default async function DashboardPage() {
             <CardDescription>Your semester-wise GPA progression</CardDescription>
           </CardHeader>
           <CardContent>
-            <GPATrendChart data={semesterData} />
+            <GPATrendChart data={[]} />
           </CardContent>
         </Card>
 
@@ -115,7 +135,7 @@ export default async function DashboardPage() {
             <CardDescription>GPA distribution across your courses</CardDescription>
           </CardHeader>
           <CardContent>
-            <CourseGPAChart data={allCourses} />
+            <CourseGPAChart data={[]} />
           </CardContent>
         </Card>
       </div>

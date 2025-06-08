@@ -1,4 +1,23 @@
-import type { Course, SemesterWithCourses } from "./supabase"
+// Define types directly in the file
+interface Course {
+  id: string;
+  name: string;
+  credit_hours: number;
+  gpa: number;
+  semester_id: string;
+  user_id: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+interface SemesterWithCourses {
+  id: string;
+  name: string;
+  user_id: string;
+  created_at: Date;
+  updated_at: Date;
+  courses: Course[];
+}
 
 export function calculateSGPA(courses: Course[]): number {
   if (courses.length === 0) return 0

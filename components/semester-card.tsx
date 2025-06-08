@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase, type SemesterWithCourses } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase"
 import { calculateSGPA } from "@/lib/gpa-calculations"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,7 +14,20 @@ import { AddCourseDialog } from "@/components/add-course-dialog"
 import { toast } from "sonner"
 
 interface SemesterCardProps {
-  semester: SemesterWithCourses
+  semester: {
+    id: string
+    name: string
+    courses: {
+      id: string
+      name: string
+      credit_hours: number
+      gpa: number
+      semester_id: string
+      user_id: string
+      created_at: Date
+      updated_at: Date
+    }[]
+  }
 }
 
 export function SemesterCard({ semester }: SemesterCardProps) {

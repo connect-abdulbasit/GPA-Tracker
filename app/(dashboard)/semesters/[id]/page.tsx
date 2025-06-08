@@ -1,48 +1,71 @@
-import { auth } from "@clerk/nextjs/server"
-import { supabase, type Course } from "@/lib/supabase"
-import { calculateSGPA } from "@/lib/gpa-calculations"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ArrowLeft, BookOpen, TrendingUp, Plus } from "lucide-react"
-import Link from "next/link"
-import { AddCourseDialog } from "@/components/add-course-dialog"
-import { CourseCard } from "@/components/course-card"
-import { notFound } from "next/navigation"
+import { auth } from "@clerk/nextjs/server";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, BookOpen, TrendingUp, Plus } from "lucide-react";
+import Link from "next/link";
+import { AddCourseDialog } from "@/components/add-course-dialog";
+import { CourseCard } from "@/components/course-card";
+import { notFound } from "next/navigation";
+
+// Dummy data
+const dummySemester = {
+  semester: {
+    id: "1",
+    name: "Fall 2024",
+    user_id: "user_123",
+    created_at: new Date(),
+    updated_at: new Date(),
+  },
+  courses: [
+    {
+      id: "1",
+      name: "Introduction to Computer Science",
+      credit_hours: 3,
+      gpa: 3.7,
+      semester_id: "1",
+      user_id: "user_123",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+    {
+      id: "2",
+      name: "Data Structures",
+      credit_hours: 4,
+      gpa: 3.5,
+      semester_id: "1",
+      user_id: "user_123",
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  ],
+};
 
 async function getSemesterDetails(semesterId: string, userId: string) {
-  const { data: semester } = await supabase
-    .from("semesters")
-    .select(`
-      *,
-      courses (*)
-    `)
-    .eq("id", semesterId)
-    .eq("user_id", userId)
-    .single()
-
-  return semester
+  // Return dummy data instead of database query
+  return dummySemester;
 }
 
 interface PageProps {
   params: Promise<{
-    id: string
-  }>
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+    id: string;
+  }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function SemesterDetailsPage({
-  params,
-}: PageProps) {
-  const resolvedParams = await params
-  const { userId } = await auth()
-  const semester = await getSemesterDetails(resolvedParams.id, userId!)
+export default async function SemesterDetailsPage({ params }: PageProps) {
+  const resolvedParams = await params;
+  const { userId } = await auth();
+  const semester = await getSemesterDetails(resolvedParams.id, userId!);
 
   if (!semester) {
-    notFound()
+    notFound();
   }
-
-  const sgpa = calculateSGPA(semester.courses)
-  const totalCredits = semester.courses.reduce((sum: number, course: Course) => sum + course.credit_hours, 0)
 
   return (
     <div className="space-y-8">
@@ -53,8 +76,10 @@ export default async function SemesterDetailsPage({
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{semester.name}</h1>
-          <p className="text-muted-foreground">Manage courses and track performance for this semester</p>
+          <h1 className="text-3xl font-bold tracking-tight">{semester.semester.name}</h1>
+          <p className="text-muted-foreground">
+            Manage courses and track performance for this semester
+          </p>
         </div>
       </div>
 
@@ -65,7 +90,7 @@ export default async function SemesterDetailsPage({
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{sgpa.toFixed(2)}</div>
+            <div className="text-2xl font-bold">3.75</div>
             <p className="text-xs text-muted-foreground">Out of 4.0 scale</p>
           </CardContent>
         </Card>
@@ -87,7 +112,7 @@ export default async function SemesterDetailsPage({
             <Plus className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalCredits}</div>
+            <div className="text-2xl font-bold">18</div>
             <p className="text-xs text-muted-foreground">Total credits</p>
           </CardContent>
         </Card>
@@ -95,7 +120,7 @@ export default async function SemesterDetailsPage({
 
       <div className="flex justify-between items-center">
         <h2 className="text-2xl font-bold">Courses</h2>
-        <AddCourseDialog semesterId={semester.id} />
+        <AddCourseDialog semesterId={semester.semester.id} />
       </div>
 
       {semester.courses.length === 0 ? (
@@ -103,19 +128,21 @@ export default async function SemesterDetailsPage({
           <CardHeader className="text-center">
             <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <CardTitle>No Courses Yet</CardTitle>
-            <CardDescription>Add your first course to start tracking your GPA</CardDescription>
+            <CardDescription>
+              Add your first course to start tracking your GPA
+            </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <AddCourseDialog semesterId={semester.id} />
+            <AddCourseDialog semesterId={semester.semester.id} />
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {semester.courses.map((course: Course) => (
+          {semester.courses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}
         </div>
       )}
     </div>
-  )
+  );
 }

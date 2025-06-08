@@ -1,21 +1,64 @@
 import { auth } from "@clerk/nextjs/server"
-import { supabase } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen } from "lucide-react"
 import { AddSemesterDialog } from "@/components/add-semester-dialog"
 import { SemesterCard } from "@/components/semester-card"
 
-async function getSemesters(userId: string) {
-  const { data: semesters } = await supabase
-    .from("semesters")
-    .select(`
-      *,
-      courses (*)
-    `)
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
+// Dummy data
+const dummySemesters = [
+  {
+    id: "1",
+    name: "Fall 2024",
+    user_id: "user_123",
+    created_at: new Date(),
+    updated_at: new Date(),
+    courses: [
+      {
+        id: "1",
+        name: "Introduction to Computer Science",
+        credit_hours: 3,
+        gpa: 3.7,
+        semester_id: "1",
+        user_id: "user_123",
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+      {
+        id: "2",
+        name: "Data Structures",
+        credit_hours: 4,
+        gpa: 3.5,
+        semester_id: "1",
+        user_id: "user_123",
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ],
+  },
+  {
+    id: "2",
+    name: "Spring 2024",
+    user_id: "user_123",
+    created_at: new Date(),
+    updated_at: new Date(),
+    courses: [
+      {
+        id: "3",
+        name: "Algorithms",
+        credit_hours: 4,
+        gpa: 3.8,
+        semester_id: "2",
+        user_id: "user_123",
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ],
+  },
+];
 
-  return semesters || []
+async function getSemesters(userId: string) {
+  // Return dummy data instead of database query
+  return dummySemesters;
 }
 
 async function getDashboardData(userId: string) {

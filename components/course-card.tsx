@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase, type Course } from "@/lib/supabase"
+import { supabase } from "@/lib/supabase"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -11,7 +11,13 @@ import { MoreHorizontal, BookOpen, Trash2 } from "lucide-react"
 import { toast } from "sonner"
 
 interface CourseCardProps {
-  course: Course
+  course: {
+    id: string
+    name: string
+    credit_hours: number
+    gpa: number
+    semester_id: string
+  }
 }
 
 export function CourseCard({ course }: CourseCardProps) {
