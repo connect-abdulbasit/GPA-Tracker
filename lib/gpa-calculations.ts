@@ -34,16 +34,16 @@ export function calculateCGPA(semesters: SemesterWithCourses[]): number {
 }
 
 export const gradeScale = [
-  { grade: "A+", gpa: 4.0, range: "97-100" },
-  { grade: "A", gpa: 4.0, range: "93-96" },
-  { grade: "A-", gpa: 3.7, range: "90-92" },
-  { grade: "B+", gpa: 3.3, range: "87-89" },
-  { grade: "B", gpa: 3.0, range: "83-86" },
-  { grade: "B-", gpa: 2.7, range: "80-82" },
-  { grade: "C+", gpa: 2.3, range: "77-79" },
-  { grade: "C", gpa: 2.0, range: "73-76" },
-  { grade: "C-", gpa: 1.7, range: "70-72" },
-  { grade: "D+", gpa: 1.3, range: "67-69" },
-  { grade: "D", gpa: 1.0, range: "65-66" },
-  { grade: "F", gpa: 0.0, range: "0-64" },
+  { grade: "A+", gpa: 4.0, range: "90+" },
+  { grade: "A", gpa: 4.0, range: "86 - 89.9" },
+  { grade: "A-", gpa: 3.67, range: "82 - 85.9" },
+  { grade: "B+", gpa: 3.33, range: "78 - 81.9" },
+  { grade: "B", gpa: 3.0, range: "74 - 77.9" },
+  { grade: "B-", gpa: 2.67, range: "70 - 73.9" },
+  { grade: "C+", gpa: 2.33, range: "66 - 69.9" },
+  { grade: "C", gpa: 2.0, range: "62 - 65.9" },
+  { grade: "C-", gpa: 1.67, range: "58 - 61.9" },
+  { grade: "D+", gpa: 1.33, range: "54 - 57.9" },
+  { grade: "D", gpa: 1.0, range: "50.0 - 53.9" },
+  { grade: "F", gpa: 0.0, range: "< 50" },
 ]

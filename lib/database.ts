@@ -28,10 +28,8 @@ export class DatabaseManager {
   }): Promise<DatabaseUser | null> {
     try {
       const email = clerkUser.emailAddresses[0]?.emailAddress || ''
-      console.log(email)
       // Check if user with email already exists
       const existingUser = await db.select().from(usersTable).where(eq(usersTable.email, email))
-      console.log(existingUser)
       if (existingUser.length > 0) {
         return existingUser[0]
       }
