@@ -9,6 +9,9 @@ const nextConfig = {
     ];
     return config;
   },
+  experimental: {
+    serverComponentsExternalPackages: ['@clerk/nextjs']
+  }
 };
 
 module.exports = nextConfig;
