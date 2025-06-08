@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BookOpen } from "lucide-react"
 import { AddSemesterDialog } from "@/components/add-semester-dialog"
 import { SemesterCard } from "@/components/semester-card"
+import { fetchSemesters } from "@/app/actions/semester"
 
 // Dummy data
 const dummySemesters = [
@@ -57,8 +58,8 @@ const dummySemesters = [
 ];
 
 async function getSemesters(userId: string) {
-  // Return dummy data instead of database query
-  return dummySemesters;
+  const semesters = await fetchSemesters(userId)
+  return semesters;
 }
 
 async function getDashboardData(userId: string) {

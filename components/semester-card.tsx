@@ -16,7 +16,10 @@ import { toast } from "sonner"
 interface SemesterCardProps {
   semester: {
     id: string
+    user_id: string
     name: string
+    created_at: Date
+    updated_at: Date
     courses: {
       id: string
       name: string

@@ -19,12 +19,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
+import { addCourse } from "@/app/actions/course"
+import { useUser } from "@clerk/nextjs"
 
 interface AddCourseDialogProps {
   semesterId: string
 }
 
 export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
+  const { user } = useUser()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState("")
   const [creditHours, setCreditHours] = useState("")
@@ -46,16 +49,17 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
 
     setLoading(true)
     try {
-      const { error } = await supabase.from("courses").insert([
-        {
-          semester_id: semesterId,
-          name: name.trim(),
-          credit_hours: creditHoursNum,
-          gpa: gpaNum,
-        },
-      ])
+      // const { error } = await supabase.from("courses").insert([
+      //   {
+      //     semester_id: semesterId,
+      //     name: name.trim(),
+      //     credit_hours: creditHoursNum,
+      //     gpa: gpaNum,
+      //   },
+      // ])
 
-      if (error) throw error
+      // if (error) throw error
+      await addCourse(semesterId, user?.id!, name.trim(), creditHoursNum, gpaNum)
 
       toast.success("Course added successfully!")
       setName("")
@@ -125,10 +129,10 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
                 type="number"
                 min="0"
                 max="4"
-                step="0.1"
+                step="0.001"
                 value={gpa}
                 onChange={(e) => setGpa(e.target.value)}
-                placeholder="3.7"
+                placeholder="4"
                 className="col-span-3"
                 required
               />

@@ -5,7 +5,6 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
-import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -20,6 +19,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
+import { addSemester } from "@/app/actions/semester"
 
 export function AddSemesterDialog() {
   const [open, setOpen] = useState(false)
@@ -34,15 +34,9 @@ export function AddSemesterDialog() {
 
     setLoading(true)
     try {
-      const { error } = await supabase.from("semesters").insert([
-        {
-          user_id: user.id,
-          name: name.trim(),
-        },
-      ])
-
-      if (error) throw error
-
+      const result = await addSemester(user.id, name.trim())
+      console.log(result)
+      console.log(user.id)
       toast.success("Semester added successfully!")
       setName("")
       setOpen(false)

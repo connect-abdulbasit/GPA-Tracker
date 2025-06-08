@@ -25,7 +25,7 @@ export function calculateSGPA(courses: Course[]): number {
   const totalPoints = courses.reduce((sum, course) => sum + course.gpa * course.credit_hours, 0)
   const totalCredits = courses.reduce((sum, course) => sum + course.credit_hours, 0)
 
-  return totalCredits > 0 ? totalPoints / totalCredits : 0
+  return totalCredits > 0 ? Number((totalPoints / totalCredits).toFixed(2)) : 0
 }
 
 export function calculateCGPA(semesters: SemesterWithCourses[]): number {

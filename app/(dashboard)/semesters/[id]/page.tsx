@@ -12,6 +12,8 @@ import Link from "next/link";
 import { AddCourseDialog } from "@/components/add-course-dialog";
 import { CourseCard } from "@/components/course-card";
 import { notFound } from "next/navigation";
+import { fetchSemesterById } from "@/app/actions/semester";
+import { calculateSGPA } from "@/lib/gpa-calculations";
 
 // Dummy data
 const dummySemester = {
@@ -48,7 +50,7 @@ const dummySemester = {
 
 async function getSemesterDetails(semesterId: string, userId: string) {
   // Return dummy data instead of database query
-  return dummySemester;
+  return fetchSemesterById(semesterId,userId);
 }
 
 interface PageProps {
@@ -62,7 +64,8 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
   const resolvedParams = await params;
   const { userId } = await auth();
   const semester = await getSemesterDetails(resolvedParams.id, userId!);
-
+  const sgpa = calculateSGPA(semester.courses)
+  const totalCredits = semester.courses.reduce((sum: number, course: any) => sum + course.credit_hours, 0)
   if (!semester) {
     notFound();
   }
@@ -76,7 +79,7 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">{semester.semester.name}</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{semester.name}</h1>
           <p className="text-muted-foreground">
             Manage courses and track performance for this semester
           </p>
@@ -90,7 +93,7 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3.75</div>
+            <div className="text-2xl font-bold">{semester.gpa||sgpa}</div>
             <p className="text-xs text-muted-foreground">Out of 4.0 scale</p>
           </CardContent>
         </Card>
@@ -112,15 +115,17 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
             <Plus className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">18</div>
+            <div className="text-2xl font-bold">{semester.credit_hours||totalCredits}</div>
             <p className="text-xs text-muted-foreground">Total credits</p>
           </CardContent>
         </Card>
       </div>
 
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center gap-4">
         <h2 className="text-2xl font-bold">Courses</h2>
-        <AddCourseDialog semesterId={semester.semester.id} />
+        <div className="flex justify-between items-center">
+          <AddCourseDialog semesterId={semester.id} />
+        </div>
       </div>
 
       {semester.courses.length === 0 ? (
@@ -133,12 +138,12 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <AddCourseDialog semesterId={semester.semester.id} />
+            <AddCourseDialog semesterId={semester.id} />
           </CardContent>
         </Card>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {semester.courses.map((course) => (
+          {semester.courses.map((course: any) => (
             <CourseCard key={course.id} course={course} />
           ))}
         </div>
