@@ -84,7 +84,7 @@ export function GoalTracker({ semesters }: GoalTrackerProps) {
                   <span>Target: {targetGPA}</span>
                 </div>
                 <Progress value={progressPercentage} className="h-2" />
-                <p className="text-xs text-muted-foreground">{progressPercentage.toFixed(1)}% of target achieved</p>
+                <p className="text-xs text-muted-foreground">{progressPercentage.toFixed(2)}% of target achieved</p>
               </div>
             </div>
           </div>

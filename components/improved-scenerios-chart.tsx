@@ -75,7 +75,7 @@ export function ImprovedScenariosChart({ currentCGPA, targetCGPA, scenarios }: I
           ticks={[0, 1, 2, 3, 4]}
           axisLine={false}
           tickLine={false}
-          tickFormatter={(value) => `${value.toFixed(1)}`}
+          tickFormatter={(value) => `${value.toFixed(2)}`}
         />
         <Tooltip
           formatter={(value: number) => [`${value.toFixed(2)} GPA`, ""]}

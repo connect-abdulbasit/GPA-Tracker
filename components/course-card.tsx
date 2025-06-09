@@ -74,7 +74,7 @@ export function CourseCard({ course }: CourseCardProps) {
             variant={course.gpa >= 3.5 ? "default" : course.gpa >= 3.0 ? "secondary" : "destructive"}
             className="text-lg font-bold"
           >
-            {course.gpa.toFixed(1)}
+            {course.gpa.toFixed(2)}
           </Badge>
         </div>
       </CardContent>
