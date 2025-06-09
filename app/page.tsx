@@ -1,12 +1,11 @@
-// import { auth } from "@clerk/nextjs/server"
+import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { SignIn } from "@clerk/nextjs"
 import { GraduationCap, TrendingUp, BarChart3, Calculator } from "lucide-react"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export default async function HomePage() {
-  // const { userId } = await auth()
-  const userId = "user_2t345678901234567890123456"
+  const { userId } = await auth()
 
   if (userId) {
     redirect("/dashboard")
