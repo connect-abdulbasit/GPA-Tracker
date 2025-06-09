@@ -3,10 +3,11 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { UserButton } from "@clerk/nextjs"
-import { Moon, Sun, GraduationCap } from "lucide-react"
+import { Moon, Sun, GraduationCap, Menu, X } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useState } from "react"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
@@ -17,6 +18,7 @@ const navigation = [
 export function Navbar() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -49,7 +51,46 @@ export function Navbar() {
               <span className="sr-only">Toggle theme</span>
             </Button>
             <UserButton afterSignOutUrl="/" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="sm:hidden"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+              <span className="sr-only">Toggle menu</span>
+            </Button>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      <div
+        className={cn(
+          "sm:hidden",
+          isMobileMenuOpen ? "block" : "hidden"
+        )}
+      >
+        <div className="space-y-1 px-2 pb-3 pt-2">
+          {navigation.map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={cn(
+                "block rounded-md px-3 py-2 text-base font-medium",
+                pathname === item.href
+                  ? "bg-primary/10 text-foreground"
+                  : "text-foreground/60 hover:bg-primary/10 hover:text-foreground"
+              )}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {item.name}
+            </Link>
+          ))}
         </div>
       </div>
     </nav>

@@ -32,8 +32,8 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 px-4 sm:px-0">
         <div className="flex items-center space-x-4">
           <Button variant="outline" size="icon" asChild>
             <Link href="/semesters">
@@ -41,8 +41,8 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
             </Link>
           </Button>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">{semester.name}</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">{semester.name}</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               Manage courses and track performance for this semester
             </p>
           </div>
@@ -50,7 +50,7 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
         <SemesterActions semesterId={semester.id} semesterName={semester.name} />
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 px-4 sm:px-0">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Semester GPA</CardTitle>
@@ -85,15 +85,15 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
         </Card>
       </div>
 
-      <div className="flex justify-between items-center gap-4">
-        <h2 className="text-2xl font-bold">Courses</h2>
-        <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 sm:px-0">
+        <h2 className="text-xl sm:text-2xl font-bold">Courses</h2>
+        <div className="w-full sm:w-auto">
           <AddCourseDialog semesterId={semester.id} />
         </div>
       </div>
 
       {semester.courses.length === 0 ? (
-        <Card>
+        <Card className="mx-4 sm:mx-0">
           <CardHeader className="text-center">
             <BookOpen className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <CardTitle>No Courses Yet</CardTitle>
@@ -106,7 +106,7 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 sm:px-0">
           {semester.courses.map((course: any) => (
             <CourseCard key={course.id} course={course} />
           ))}

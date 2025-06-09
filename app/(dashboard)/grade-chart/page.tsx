@@ -5,13 +5,13 @@ import { GraduationCap, Info } from "lucide-react"
 
 export default function GradeChartPage() {
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Grade Chart</h1>
-        <p className="text-muted-foreground">Reference chart for grade-to-GPA conversion on a 4.0 scale</p>
+    <div className="space-y-4 sm:space-y-8">
+      <div className="px-4 sm:px-0">
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Grade Chart</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Reference chart for grade-to-GPA conversion on a 4.0 scale</p>
       </div>
 
-      <Card>
+      <Card className="mx-4 sm:mx-0">
         <CardHeader>
           <div className="flex items-center space-x-2">
             <GraduationCap className="h-5 w-5" />
@@ -20,7 +20,7 @@ export default function GradeChartPage() {
           <CardDescription>Use this reference when entering your course grades</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
             {gradeScale.map((grade) => (
               <div key={grade.grade} className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center space-x-3">
@@ -41,7 +41,7 @@ export default function GradeChartPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="mx-4 sm:mx-0">
         <CardHeader>
           <div className="flex items-center space-x-2">
             <Info className="h-5 w-5" />
@@ -49,7 +49,7 @@ export default function GradeChartPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Badge className="min-w-[5rem] justify-center">3.5 - 4.0</Badge>
