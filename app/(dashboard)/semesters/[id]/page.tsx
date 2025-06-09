@@ -14,11 +14,6 @@ import { CourseCard } from "@/components/course-card";
 import { notFound } from "next/navigation";
 import { fetchSemesterById } from "@/app/actions/semester";
 
-async function getSemesterDetails(semesterId: string, userId: string) {
-  // Return dummy data instead of database query
-  return fetchSemesterById(semesterId,userId);
-}
-
 interface PageProps {
   params: Promise<{
     id: string;
@@ -29,9 +24,8 @@ interface PageProps {
 export default async function SemesterDetailsPage({ params }: PageProps) {
   const resolvedParams = await params;
   const { userId } = await auth();
-  const semester = await getSemesterDetails(resolvedParams.id, userId!);
-  // const sgpa = calculateSGPA(semester.courses)
-  // const totalCredits = semester.courses.reduce((sum: number, course: any) => sum + course.credit_hours, 0)
+  const semester = await fetchSemesterById(resolvedParams.id,userId!);
+
   if (!semester) {
     notFound();
   }

@@ -57,7 +57,7 @@ export const fetchSemesterById = async (semesterId: string, userId: string) => {
     .leftJoin(coursesTable, and(
       eq(semestersTable.id, coursesTable.semester_id),
       eq(coursesTable.active, true)
-    ))
+    )).orderBy(desc(coursesTable.gpa),desc(coursesTable.credit_hours))
     .execute();
 
   const semestersMap = new Map<string, any>();
