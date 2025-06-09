@@ -1,14 +1,16 @@
 'use client'
 
+import { getUser } from '@/app/actions/user'
+import { db, usersTable } from '@/src/db'
 import { useUser } from '@clerk/nextjs'
-import { useEffect } from 'react'
+import { eq } from 'drizzle-orm'
+import { useEffect, useState } from 'react'
 
 export function useUserSync() {
   const { user, isLoaded } = useUser()
 
   useEffect(() => {
     if (isLoaded && user) {
-      // Call API route instead of direct database operations
       fetch('/api/users/sync', {
         method: 'POST',
         headers: {
@@ -32,3 +34,16 @@ export function useUserSync() {
 
   return { user, isLoaded }
 } 
+
+export const useUserData = () => {
+  const { user, isLoaded } = useUser()
+  const [userData, setUserData] = useState<any>(null)
+  useEffect(() => {
+    if (isLoaded && user) {
+      getUser(user.id).then((data) => {
+        setUserData(data)
+      })
+    }
+  }, [user, isLoaded])
+  return userData
+}

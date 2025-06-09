@@ -3,12 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TrendingUp, BookOpen, GraduationCap, Target } from "lucide-react"
 import { GPATrendChart } from "@/components/gpa-trend-chart"
 import { CourseGPAChart } from "@/components/course-gpa-chart"
-import { getDashboardData, getGpaTrendData } from "@/app/actions/dashboard"
+import { getCourseData, getDashboardData, getGpaTrendData } from "@/app/actions/dashboard"
 
 export default async function DashboardPage() {
   const { userId } = await auth()
   const dashboardData = await getDashboardData(userId!)
   const gpaTrendData = await getGpaTrendData(userId!)
+  const courseData = await getCourseData(userId!)
   return (
     <div className="space-y-4 sm:space-y-8">
       <div className="px-4 sm:px-0">
@@ -79,7 +80,7 @@ export default async function DashboardPage() {
             <CardDescription>GPA distribution across your courses</CardDescription>
           </CardHeader>
           <CardContent>
-            <CourseGPAChart data={[]} />
+            <CourseGPAChart data={courseData} />
           </CardContent>
         </Card>
       </div>

@@ -97,3 +97,23 @@ return Array.from(semestersMap.values()).map((semester) => ({
     courses: semester.courses.length,
   }))
 }
+
+export const getCourseData = async (userId: string) => {
+  const results = await db
+  .select({
+    name: coursesTable.name,
+    gpa: coursesTable.gpa,
+    credit_hours: coursesTable.credit_hours,
+    semesterName: semestersTable.name,
+    type: coursesTable.type,
+  })
+  .from(coursesTable)
+  .where(and(eq(coursesTable.user_id, userId), eq(coursesTable.active, true)))
+  .leftJoin(semestersTable, and(
+    eq(coursesTable.semester_id, semestersTable.id),
+    eq(semestersTable.active, true)
+  ))
+  .orderBy(asc(coursesTable.created_at))
+  .execute();
+  return results;
+}

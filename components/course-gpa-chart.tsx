@@ -1,13 +1,14 @@
 "use client"
 
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts"
 
 interface CourseGPAChartProps {
   data: Array<{
     name: string
     gpa: number
     credit_hours: number
-    semesterName: string
+    semesterName: string | null
+    type: string
   }>
 }
 
@@ -20,24 +21,66 @@ export function CourseGPAChart({ data }: CourseGPAChartProps) {
     )
   }
 
-  // Take only the latest 10 courses to avoid overcrowding
-  const recentCourses = data.slice(-10)
+  const courseStats = data.reduce((acc, course) => {
+    if (course.type === 'non-credit') return acc;
+    
+    if (!acc[course.type]) {
+      acc[course.type] = {
+        totalGPA: 0,
+        count: 0,
+        totalCredits: 0
+      };
+    }
+    
+    acc[course.type].totalGPA += course.gpa * course.credit_hours;
+    acc[course.type].totalCredits += course.credit_hours;
+    acc[course.type].count += 1;
+    
+    return acc;
+  }, {} as Record<string, { totalGPA: number; count: number; totalCredits: number }>);
+
+  const chartData = Object.entries(courseStats).map(([type, stats]) => ({
+    type: type.charAt(0).toUpperCase() + type.slice(1),
+    gpa: Number((stats.totalGPA / stats.totalCredits).toFixed(2)),
+    count: stats.count,
+    totalCredits: stats.totalCredits
+  }));
 
   return (
     <ResponsiveContainer width="100%" height={300}>
-      <BarChart data={recentCourses}>
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} fontSize={12} />
-        <YAxis domain={[0, 4]} />
+      <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--muted))" />
+        <XAxis 
+          dataKey="type" 
+          tick={{ fill: "hsl(var(--foreground))" }}
+          axisLine={{ stroke: "hsl(var(--border))" }}
+        />
+        <YAxis 
+          domain={[0, 4]} 
+          tick={{ fill: "hsl(var(--foreground))" }}
+          axisLine={{ stroke: "hsl(var(--border))" }}
+        />
         <Tooltip
-          formatter={(value: number, name, props) => [
+          contentStyle={{
+            backgroundColor: "hsl(var(--background))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "6px",
+          }}
+          formatter={(value: number, name: string, props: any) => [
             value.toFixed(2),
-            "GPA",
-            `Credits: ${props.payload.credit_hours}`,
-            `Semester: ${props.payload.semesterName}`,
+            name === "gpa" ? "Average GPA" : name,
+            `Total Courses: ${props.payload.count}`,
+            `Total Credits: ${props.payload.totalCredits}`,
           ]}
         />
-        <Bar dataKey="gpa" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+        <Legend />
+        <Bar 
+          dataKey="gpa" 
+          fill="hsl(var(--primary))" 
+          radius={[4, 4, 0, 0]} 
+          name="Average GPA"
+          maxBarSize={60}
+        />
       </BarChart>
     </ResponsiveContainer>
   )

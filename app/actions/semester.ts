@@ -43,7 +43,6 @@ export const fetchSemesters = async (userId: string) => {
       });
     }
   }
-console.log("Semesters:",Array.from(semestersMap.values()))
   return Array.from(semestersMap.values());
 };
 

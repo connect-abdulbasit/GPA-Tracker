@@ -2,24 +2,30 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { UserButton } from "@clerk/nextjs"
+import { UserButton, useUser } from "@clerk/nextjs"
 import { Moon, Sun, GraduationCap, Menu, X } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import {  useUserData } from "@/hooks/useUserSync"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
   { name: "Semesters", href: "/semesters" },
   { name: "Grade Chart", href: "/grade-chart" },
+  { name: "Forecast", href: "/forecast", badge: "Coming Soon", disabled: true },
 ]
 
 export function Navbar() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const userData = useUserData()
+  console.log("userData",userData)
+  const isAdmin = userData?.role === "admin"
+  console.log("isAdmin",isAdmin)
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
@@ -32,6 +38,34 @@ export function Navbar() {
       document.body.style.overflow = 'unset'
     }
   }, [isMobileMenuOpen])
+
+  const renderNavItem = (item: typeof navigation[0]) => {
+    const isComingSoon = item.badge === "Coming Soon"
+    const canAccess = !isComingSoon || isAdmin
+    const content = (
+      <>
+        {item.name}
+        {item.badge && (
+          <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+            {item.badge}
+          </span>
+        )}
+      </>
+    )
+
+    if (!canAccess) {
+      return (
+        <div className="relative">
+          <div className="blur-sm">{content}</div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="text-xs text-muted-foreground">Admin Only</span>
+          </div>
+        </div>
+      )
+    }
+
+    return content
+  }
 
   return (
     <>
@@ -47,13 +81,19 @@ export function Navbar() {
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
-                    href={item.href}
+                    href={item.disabled && !isAdmin ? "#" : item.href}
                     className={cn(
-                      "inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors hover:text-foreground/80",
+                      "inline-flex items-center px-1 pt-1 text-sm font-medium transition-colors",
                       pathname === item.href ? "border-b-2 border-primary text-foreground" : "text-foreground/60",
+                      item.disabled && !isAdmin && "cursor-not-allowed opacity-50"
                     )}
                   >
                     {item.name}
+                    {item.badge && (
+                      <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                        {item.badge}
+                      </span>
+                    )}
                   </Link>
                 ))}
               </div>
@@ -102,16 +142,24 @@ export function Navbar() {
                 {navigation.map((item) => (
                   <Link
                     key={item.name}
-                    href={item.href}
+                    href={item.disabled && !isAdmin ? "#" : item.href}
                     className={cn(
                       "block rounded-md px-3 py-2 text-base font-medium",
                       pathname === item.href
                         ? "bg-primary/10 text-foreground"
-                        : "text-foreground/60 hover:bg-primary/10 hover:text-foreground"
+                        : "text-foreground/60 hover:bg-primary/10 hover:text-foreground",
+                      item.disabled && !isAdmin && "cursor-not-allowed opacity-50"
                     )}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {item.name}
+                    <div className="flex items-center">
+                      {item.name}
+                      {item.badge && (
+                        <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
                   </Link>
                 ))}
               </motion.div>
