@@ -77,9 +77,11 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size="sm" className="flex-1">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Course
+        <Button size="sm" className="w-full sm:w-auto">
+          <div className="flex items-center justify-center w-full">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Course
+          </div>
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

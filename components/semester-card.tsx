@@ -62,17 +62,17 @@ export function SemesterCard({ semester, userId }: SemesterCardProps) {
 
   return (
     <>
-      <Card>
+      <Card className="w-full">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <div>
-            <CardTitle className="text-lg">{semester.name}</CardTitle>
+          <div className="flex-1 min-w-0">
+            <CardTitle className="text-lg truncate">{semester.name}</CardTitle>
             <CardDescription>
               {semester.courses.length} courses • {semester.total_credits} credits
             </CardDescription>
           </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="shrink-0">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -103,8 +103,8 @@ export function SemesterCard({ semester, userId }: SemesterCardProps) {
             ) : (
               semester.courses.slice(0, 3).map((course) => (
                 <div key={course.id} className="flex justify-between items-center text-sm">
-                  <span className="truncate">{course.name}</span>
-                  <div className="flex items-center space-x-2">
+                  <span className="truncate flex-1 mr-2">{course.name}</span>
+                  <div className="flex items-center space-x-2 shrink-0">
                     <span className="text-muted-foreground">{course.credit_hours}cr</span>
                     <Badge variant="outline">{course.gpa.toFixed(2)}</Badge>
                   </div>
@@ -116,10 +116,10 @@ export function SemesterCard({ semester, userId }: SemesterCardProps) {
             )}
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <AddCourseDialog semesterId={semester.id} />
-            <Button variant="outline" size="sm" asChild className="flex-1">
-              <Link href={`/semesters/${semester.id}`}>
+            <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
+              <Link href={`/semesters/${semester.id}`} className="flex items-center justify-center">
                 <BookOpen className="h-4 w-4 mr-2" />
                 View Details
               </Link>
