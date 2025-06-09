@@ -2,20 +2,21 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { UserButton, useUser } from "@clerk/nextjs"
+import { UserButton } from "@clerk/nextjs"
 import { Moon, Sun, GraduationCap, Menu, X } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import {  useUserData } from "@/hooks/useUserSync"
+import { useUserData } from "@/hooks/useUserSync"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard" },
   { name: "Semesters", href: "/semesters" },
   { name: "Grade Chart", href: "/grade-chart" },
   { name: "Forecast", href: "/forecast", badge: "Coming Soon", disabled: true },
+  { name: "Resources", href: "/resources", badge: "Coming Soon", disabled: true },
 ]
 
 export function Navbar() {
@@ -23,11 +24,8 @@ export function Navbar() {
   const { theme, setTheme } = useTheme()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const userData = useUserData()
-  console.log("userData",userData)
   const isAdmin = userData?.role === "admin"
-  console.log("isAdmin",isAdmin)
 
-  // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden'
@@ -38,34 +36,6 @@ export function Navbar() {
       document.body.style.overflow = 'unset'
     }
   }, [isMobileMenuOpen])
-
-  const renderNavItem = (item: typeof navigation[0]) => {
-    const isComingSoon = item.badge === "Coming Soon"
-    const canAccess = !isComingSoon || isAdmin
-    const content = (
-      <>
-        {item.name}
-        {item.badge && (
-          <span className="ml-2 rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
-            {item.badge}
-          </span>
-        )}
-      </>
-    )
-
-    if (!canAccess) {
-      return (
-        <div className="relative">
-          <div className="blur-sm">{content}</div>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-xs text-muted-foreground">Admin Only</span>
-          </div>
-        </div>
-      )
-    }
-
-    return content
-  }
 
   return (
     <>
@@ -167,7 +137,6 @@ export function Navbar() {
           )}
         </AnimatePresence>
       </nav>
-      {/* Add padding to account for fixed navbar */}
       <div className="h-16" />
     </>
   )

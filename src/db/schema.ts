@@ -38,3 +38,16 @@ export const coursesTable = pgTable('courses', {
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })
+
+export const resourcesTable = pgTable('resources', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  user_id: text('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+  course_id: uuid('course_id').references(() => coursesTable.id, { onDelete: 'cascade' }),
+  semester_id: uuid('semester_id').references(() => semestersTable.id, { onDelete: 'cascade' }),
+  title: text('title').notNull(),
+  description: text('description'),
+  resource_type: text('resource_type', { enum: ['link', 'github', 'pdf', 'document', 'video', 'image', 'other'] }).notNull(),
+  url: text('url'),
+  tags: text('tags').array().default([]).notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+})

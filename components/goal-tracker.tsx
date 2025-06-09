@@ -11,6 +11,7 @@ import { Target, TrendingUp, AlertCircle, CheckCircle, Plus, Trash2 } from "luci
 import type { ForecastCourse, ForecastResult } from "@/lib/gpa-forecast"
 import { calculateForecast, generateSampleFutureCourses } from "@/lib/gpa-forecast"
 import { GPAForecastChart } from "./gpa-forecast-chart"
+import { ImprovedScenariosChart } from "./improved-scenerios-chart"
 
 interface GoalTrackerProps {
   semesters: any[]
@@ -227,41 +228,18 @@ export function GoalTracker({ semesters }: GoalTrackerProps) {
         </CardContent>
       </Card>
 
-      {/* Scenarios Summary */}
+      {/* Improved Scenarios Chart */}
       <Card>
         <CardHeader>
           <CardTitle>Performance Scenarios</CardTitle>
           <CardDescription>See how different performance levels affect your CGPA</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-orange-600">Optimistic</span>
-                <Badge variant="outline">3.8 avg</Badge>
-              </div>
-              <p className="text-2xl font-bold">{forecast.scenarios.optimistic.toFixed(2)}</p>
-              <p className="text-sm text-muted-foreground">If you excel in all courses</p>
-            </div>
-
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-purple-600">Realistic</span>
-                <Badge variant="outline">3.3 avg</Badge>
-              </div>
-              <p className="text-2xl font-bold">{forecast.scenarios.realistic.toFixed(2)}</p>
-              <p className="text-sm text-muted-foreground">With good performance</p>
-            </div>
-
-            <div className="p-4 border rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-medium text-gray-600">Conservative</span>
-                <Badge variant="outline">2.8 avg</Badge>
-              </div>
-              <p className="text-2xl font-bold">{forecast.scenarios.conservative.toFixed(2)}</p>
-              <p className="text-sm text-muted-foreground">With average performance</p>
-            </div>
-          </div>
+          <ImprovedScenariosChart
+            currentCGPA={currentCGPA}
+            targetCGPA={Number.parseFloat(targetGPA) || 3.5}
+            scenarios={forecast.scenarios}
+          />
         </CardContent>
       </Card>
     </div>
