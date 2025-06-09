@@ -20,6 +20,7 @@ export const semestersTable = pgTable('semesters', {
   gpa: real('gpa').default(0.00).notNull(),
   total_credits: integer('total_credits').default(0).notNull(),
   active: boolean('active').default(true).notNull(),
+  status: text('status').default('completed').notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })

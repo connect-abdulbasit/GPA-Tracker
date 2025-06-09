@@ -13,6 +13,7 @@ import { AddCourseDialog } from "@/components/add-course-dialog";
 import { CourseCard } from "@/components/course-card";
 import { notFound } from "next/navigation";
 import { fetchSemesterById } from "@/app/actions/semester";
+import { SemesterActions } from "@/components/semester-actions";
 
 interface PageProps {
   params: Promise<{
@@ -32,18 +33,21 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center space-x-4">
-        <Button variant="outline" size="icon" asChild>
-          <Link href="/semesters">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">{semester.name}</h1>
-          <p className="text-muted-foreground">
-            Manage courses and track performance for this semester
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button variant="outline" size="icon" asChild>
+            <Link href="/semesters">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">{semester.name}</h1>
+            <p className="text-muted-foreground">
+              Manage courses and track performance for this semester
+            </p>
+          </div>
         </div>
+        <SemesterActions semesterId={semester.id} semesterName={semester.name} />
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
