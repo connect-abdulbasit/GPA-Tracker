@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TrendingUp, BookOpen, GraduationCap, Target } from "lucide-react"
 import { GPATrendChart } from "@/components/gpa-trend-chart"
-import { CourseGPAChart } from "@/components/course-gpa-chart"
+import { CourseTypeGPAChart } from "@/components/course-type-gpa-chart"
 import { getCourseData, getDashboardData, getGpaTrendData } from "@/app/actions/dashboard"
 
 export default async function DashboardPage() {
@@ -57,7 +57,7 @@ export default async function DashboardPage() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">Excellent</div>
+            <div className="text-2xl font-bold">{dashboardData.cgpa>"3.5"?"Excellent":dashboardData.cgpa>"3.0"?"Good":dashboardData.cgpa>"2.5"?"Average":"Poor"}</div>
             <p className="text-xs text-muted-foreground">Academic standing</p>
           </CardContent>
         </Card>
@@ -76,11 +76,11 @@ export default async function DashboardPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Course Performance</CardTitle>
-            <CardDescription>GPA distribution across your courses</CardDescription>
+            <CardTitle>Core vs Elective Performance</CardTitle>
+            <CardDescription>Compare your GPA performance between core and elective courses</CardDescription>
           </CardHeader>
           <CardContent>
-            <CourseGPAChart data={courseData} />
+            <CourseTypeGPAChart data={courseData} />
           </CardContent>
         </Card>
       </div>
