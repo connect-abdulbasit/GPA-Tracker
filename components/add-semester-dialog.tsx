@@ -35,8 +35,6 @@ export function AddSemesterDialog() {
     setLoading(true)
     try {
       const result = await addSemester(user.id, name.trim())
-      console.log(result)
-      console.log(user.id)
       toast.success("Semester added successfully!")
       setName("")
       setOpen(false)
