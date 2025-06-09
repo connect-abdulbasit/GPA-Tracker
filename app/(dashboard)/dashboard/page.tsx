@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TrendingUp, BookOpen, GraduationCap, Target } from "lucide-react"
 import { GPATrendChart } from "@/components/gpa-trend-chart"
 import { CourseGPAChart } from "@/components/course-gpa-chart"
+import { getDashboardData } from "@/app/actions/dashboard"
 
 // Dummy data
 const dummySemesters = [
@@ -56,14 +57,10 @@ const dummySemesters = [
   },
 ];
 
-async function getDashboardData(userId: string) {
-  // Return dummy data instead of database query
-  return dummySemesters;
-}
 
 export default async function DashboardPage() {
   const { userId } = await auth()
-  const semesters = await getDashboardData(userId!)
+  const dashboardData = await getDashboardData(userId!)
 
   return (
     <div className="space-y-8">
@@ -79,7 +76,7 @@ export default async function DashboardPage() {
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">3.85</div>
+            <div className="text-2xl font-bold">{dashboardData.cgpa}</div>
             <p className="text-xs text-muted-foreground">Out of 4.0 scale</p>
           </CardContent>
         </Card>
@@ -90,8 +87,8 @@ export default async function DashboardPage() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12</div>
-            <p className="text-xs text-muted-foreground">Across {semesters.length} semesters</p>
+            <div className="text-2xl font-bold">{dashboardData.totalCourses}</div>
+            <p className="text-xs text-muted-foreground">Across {dashboardData.totalSemesters} semesters</p>
           </CardContent>
         </Card>
 
@@ -101,7 +98,7 @@ export default async function DashboardPage() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">36</div>
+            <div className="text-2xl font-bold">{dashboardData.totalCredits}</div>
             <p className="text-xs text-muted-foreground">Total completed</p>
           </CardContent>
         </Card>
