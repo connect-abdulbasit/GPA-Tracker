@@ -6,9 +6,22 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+      {/* Animated Grid Background */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-50 dark:opacity-30"></div>
+
+        {/* Moving Gradient Overlays */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-300/30 to-purple-300/30 dark:from-blue-400/20 dark:to-purple-400/20 rounded-full blur-3xl animate-float-slow"></div>
+          <div className="absolute top-1/2 right-0 w-80 h-80 bg-gradient-to-bl from-purple-300/30 to-pink-300/30 dark:from-purple-400/20 dark:to-pink-400/20 rounded-full blur-3xl animate-float-reverse"></div>
+          <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-gradient-to-tr from-cyan-300/30 to-blue-300/30 dark:from-cyan-400/20 dark:to-blue-400/20 rounded-full blur-3xl animate-float-diagonal"></div>
+        </div>
+      </div>
+
       {/* Navigation */}
-      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 justify-between items-center">
             <Link href="/" className="flex items-center space-x-2">
@@ -26,7 +39,7 @@ export default function SignUpPage() {
       </nav>
 
       {/* Sign Up Content */}
-      <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-200px)]">
           {/* Left Side - Benefits */}
           <div className="space-y-8">

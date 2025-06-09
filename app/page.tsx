@@ -5,6 +5,7 @@ import { GraduationCap, TrendingUp, BarChart3, Calculator, Users, Shield, Zap, A
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default async function HomePage() {
   const { userId } = await auth()
@@ -24,6 +25,7 @@ export default async function HomePage() {
               <span className="text-xl font-bold">GPA Tracker</span>
             </div>
             <div className="flex items-center space-x-4">
+              <ThemeToggle />
               <Button variant="ghost" asChild>
                 <Link href="/sign-in">Sign In</Link>
               </Button>
@@ -37,7 +39,24 @@ export default async function HomePage() {
 
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <div className="container mx-auto px-4 py-24 sm:px-6 lg:px-8">
+        {/* Animated Grid Background */}
+        <div className="absolute inset-0 overflow-hidden">
+          {/* Grid Pattern */}
+          <div className="absolute inset-0 bg-grid-pattern opacity-60 dark:opacity-40"></div>
+
+          {/* Moving Gradient Overlays */}
+          <div className="absolute inset-0">
+            <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br from-blue-300/40 to-purple-300/40 dark:from-blue-400/30 dark:to-purple-400/30 rounded-full blur-3xl animate-float-slow"></div>
+            <div className="absolute top-1/2 right-0 w-80 h-80 bg-gradient-to-bl from-purple-300/40 to-pink-300/40 dark:from-purple-400/30 dark:to-pink-400/30 rounded-full blur-3xl animate-float-reverse"></div>
+            <div className="absolute bottom-0 left-1/3 w-72 h-72 bg-gradient-to-tr from-cyan-300/40 to-blue-300/40 dark:from-cyan-400/30 dark:to-blue-400/30 rounded-full blur-3xl animate-float-diagonal"></div>
+            <div
+              className="absolute top-1/4 left-1/2 w-64 h-64 bg-gradient-to-br from-indigo-300/30 to-violet-300/30 dark:from-indigo-400/25 dark:to-violet-400/25 rounded-full blur-3xl animate-float-slow"
+              style={{ animationDelay: "5s" }}
+            ></div>
+          </div>
+        </div>
+
+        <div className="container mx-auto px-4 py-24 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <Badge variant="secondary" className="mb-4">
               ✨ Track Your Academic Success

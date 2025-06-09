@@ -67,3 +67,77 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Enhanced Grid Pattern Background */
+.bg-grid-pattern {
+  background-image: linear-gradient(rgba(59, 130, 246, 0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59, 130, 246, 0.15) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 0;
+}
+
+.dark .bg-grid-pattern {
+  background-image: linear-gradient(rgba(147, 197, 253, 0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(147, 197, 253, 0.2) 1px, transparent 1px);
+}
+
+/* Enhanced Floating Animations */
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(40px, -40px) rotate(90deg) scale(1.1);
+  }
+  50% {
+    transform: translate(-30px, -80px) rotate(180deg) scale(0.9);
+  }
+  75% {
+    transform: translate(-60px, -40px) rotate(270deg) scale(1.05);
+  }
+}
+
+@keyframes float-reverse {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(-50px, 50px) rotate(-90deg) scale(0.95);
+  }
+  50% {
+    transform: translate(40px, 100px) rotate(-180deg) scale(1.1);
+  }
+  75% {
+    transform: translate(80px, 50px) rotate(-270deg) scale(0.9);
+  }
+}
+
+@keyframes float-diagonal {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+  }
+  25% {
+    transform: translate(60px, -60px) rotate(45deg) scale(1.05);
+  }
+  50% {
+    transform: translate(120px, 0px) rotate(90deg) scale(0.95);
+  }
+  75% {
+    transform: translate(60px, 60px) rotate(135deg) scale(1.1);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 18s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: float-reverse 22s ease-in-out infinite;
+}
+
+.animate-float-diagonal {
+  animation: float-diagonal 26s ease-in-out infinite;
+}
