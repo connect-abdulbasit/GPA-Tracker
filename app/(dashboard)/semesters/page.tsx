@@ -5,18 +5,10 @@ import { AddSemesterDialog } from "@/components/add-semester-dialog"
 import { SemesterCard } from "@/components/semester-card"
 import { fetchSemesters } from "@/app/actions/semester"
 
-async function getSemesters(userId: string) {
-  const semesters = await fetchSemesters(userId)
-  return semesters;
-}
-
-async function getDashboardData(userId: string) {
-  return await getSemesters(userId)
-}
 
 export default async function SemestersPage() {
   const { userId } = await auth()
-  const semesters = await getDashboardData(userId!)
+  const semesters = await fetchSemesters(userId!)
 
   return (
     <div className="space-y-8">
@@ -42,7 +34,7 @@ export default async function SemestersPage() {
       ) : (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {semesters.map((semester) => (
-            <SemesterCard key={semester.id} semester={semester} />
+            <SemesterCard key={semester.id} semester={semester} userId={userId!} />
           ))}
         </div>
       )}

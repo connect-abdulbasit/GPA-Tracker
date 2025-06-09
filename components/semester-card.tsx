@@ -2,8 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
-import { calculateSGPA } from "@/lib/gpa-calculations"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -12,6 +10,7 @@ import { MoreHorizontal, BookOpen, TrendingUp, Trash2 } from "lucide-react"
 import Link from "next/link"
 import { AddCourseDialog } from "@/components/add-course-dialog"
 import { toast } from "sonner"
+import { deleteSemester } from "@/app/actions/semester"
 
 interface SemesterCardProps {
   semester: {
@@ -33,9 +32,10 @@ interface SemesterCardProps {
       updated_at: Date
     }[]
   }
+  userId: string
 }
 
-export function SemesterCard({ semester }: SemesterCardProps) {
+export function SemesterCard({ semester, userId }: SemesterCardProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
@@ -46,9 +46,7 @@ export function SemesterCard({ semester }: SemesterCardProps) {
 
     setLoading(true)
     try {
-      const { error } = await supabase.from("semesters").delete().eq("id", semester.id)
-
-      if (error) throw error
+      await deleteSemester(semester.id, userId)
 
       toast.success("Semester deleted successfully!")
       router.refresh()
@@ -101,7 +99,7 @@ export function SemesterCard({ semester }: SemesterCardProps) {
                 <span className="truncate">{course.name}</span>
                 <div className="flex items-center space-x-2">
                   <span className="text-muted-foreground">{course.credit_hours}cr</span>
-                  <Badge variant="outline">{course.gpa.toFixed(1)}</Badge>
+                  <Badge variant="outline">{course.gpa.toFixed(2)}</Badge>
                 </div>
               </div>
             ))
