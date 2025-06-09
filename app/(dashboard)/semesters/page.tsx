@@ -4,7 +4,7 @@ import { BookOpen } from "lucide-react"
 import { AddSemesterDialog } from "@/components/add-semester-dialog"
 import { SemesterCard } from "@/components/semester-card"
 import { fetchSemesters } from "@/app/actions/semester"
-
+import { UpdateSemesterDialog } from "@/components/update-semester-dialog"
 
 export default async function SemestersPage() {
   const { userId } = await auth()
@@ -17,7 +17,10 @@ export default async function SemestersPage() {
           <h1 className="text-3xl font-bold tracking-tight">Semesters</h1>
           <p className="text-muted-foreground">Manage your semesters and courses</p>
         </div>
-        <AddSemesterDialog />
+        <div className="flex items-center gap-4">
+          <UpdateSemesterDialog />
+          <AddSemesterDialog />
+        </div>
       </div>
 
       {semesters.length === 0 ? (

@@ -93,3 +93,9 @@ export const deleteSemester = async (semesterId: string, userId: string) => {
   }).where(and(eq(coursesTable.semester_id, semesterId), eq(coursesTable.user_id, userId))).execute()
 ]);
 };
+
+export const updateSemester = async (semesterId: string, userId: string, name: string) => {
+  return await db.update(semestersTable).set({
+    name,
+  }).where(and(eq(semestersTable.id, semesterId), eq(semestersTable.user_id, userId))).execute();
+};

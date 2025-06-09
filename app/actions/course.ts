@@ -151,3 +151,12 @@ export const deleteCourse = async (courseId: string) => {
       .execute();
   
 };
+
+export const updateCourse = async (courseId: string, userId: string, name: string, creditHours: number, gpa: number, type: string) => {
+  return await db.update(coursesTable).set({
+    name,
+    credit_hours: creditHours,
+    gpa: gpa,
+    type: type,
+  }).where(and(eq(coursesTable.id, courseId), eq(coursesTable.user_id, userId))).execute();
+};
