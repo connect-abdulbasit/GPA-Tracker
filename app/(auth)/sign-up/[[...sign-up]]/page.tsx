@@ -42,7 +42,7 @@ export default function SignUpPage() {
       <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center min-h-[calc(100vh-200px)]">
           {/* Left Side - Benefits */}
-          <div className="space-y-8">
+          <div className="lg:order-1 order-2 space-y-8">
             <div>
               <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
                 Start Your Academic Journey
@@ -98,7 +98,7 @@ export default function SignUpPage() {
           </div>
 
           {/* Right Side - Sign Up Form */}
-          <div className="flex flex-col items-center">
+          <div className="lg:order-2 order-1 flex flex-col items-center">
             <div className="w-full max-w-md">
               <SignUp
                 routing="path"
