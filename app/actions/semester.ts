@@ -22,7 +22,7 @@ export const fetchSemesters = async (userId: string) => {
       eq(coursesTable.active, true)
     ))
     .where(and(eq(semestersTable.user_id, userId), eq(semestersTable.active, true)))
-    .orderBy(asc(semestersTable.created_at), desc(coursesTable.gpa))
+    .orderBy(asc(semestersTable.created_at))
     .execute();
 
   const semestersMap = new Map<string, any>();
@@ -43,7 +43,7 @@ export const fetchSemesters = async (userId: string) => {
       });
     }
   }
-
+console.log("Semesters:",Array.from(semestersMap.values()))
   return Array.from(semestersMap.values());
 };
 

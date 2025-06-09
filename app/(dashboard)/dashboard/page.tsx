@@ -3,65 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { TrendingUp, BookOpen, GraduationCap, Target } from "lucide-react"
 import { GPATrendChart } from "@/components/gpa-trend-chart"
 import { CourseGPAChart } from "@/components/course-gpa-chart"
-import { getDashboardData } from "@/app/actions/dashboard"
-
-// Dummy data
-const dummySemesters = [
-  {
-    id: "1",
-    name: "Fall 2024",
-    user_id: "user_123",
-    created_at: new Date(),
-    updated_at: new Date(),
-    courses: [
-      {
-        id: "1",
-        name: "Introduction to Computer Science",
-        credit_hours: 3,
-        gpa: 3.7,
-        semester_id: "1",
-        user_id: "user_123",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      {
-        id: "2",
-        name: "Data Structures",
-        credit_hours: 4,
-        gpa: 3.5,
-        semester_id: "1",
-        user_id: "user_123",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-    ],
-  },
-  {
-    id: "2",
-    name: "Spring 2024",
-    user_id: "user_123",
-    created_at: new Date(),
-    updated_at: new Date(),
-    courses: [
-      {
-        id: "3",
-        name: "Algorithms",
-        credit_hours: 4,
-        gpa: 3.8,
-        semester_id: "2",
-        user_id: "user_123",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-    ],
-  },
-];
-
+import { getDashboardData, getGpaTrendData } from "@/app/actions/dashboard"
 
 export default async function DashboardPage() {
   const { userId } = await auth()
   const dashboardData = await getDashboardData(userId!)
-
+  const gpaTrendData = await getGpaTrendData(userId!)
   return (
     <div className="space-y-4 sm:space-y-8">
       <div className="px-4 sm:px-0">
@@ -122,7 +69,7 @@ export default async function DashboardPage() {
             <CardDescription>Your semester-wise GPA progression</CardDescription>
           </CardHeader>
           <CardContent>
-            <GPATrendChart data={[]} />
+            <GPATrendChart data={gpaTrendData} />
           </CardContent>
         </Card>
 
