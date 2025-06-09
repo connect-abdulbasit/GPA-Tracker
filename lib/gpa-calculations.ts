@@ -19,10 +19,12 @@ interface SemesterWithCourses {
   courses: Course[];
 }
 
-export function calculateSGPA(courses: Course[]): number {
+export function calculateSGPA(courses: {credit_hours: number, gpa: number}[]): number {
   if (courses.length === 0) return 0
 
-  const totalPoints = courses.reduce((sum, course) => sum + course.gpa * course.credit_hours, 0)
+  console.log(courses)
+
+  const totalPoints = courses.reduce((sum, course) => sum + (course.gpa * course.credit_hours), 0)
   const totalCredits = courses.reduce((sum, course) => sum + course.credit_hours, 0)
 
   return totalCredits > 0 ? Number((totalPoints / totalCredits).toFixed(2)) : 0

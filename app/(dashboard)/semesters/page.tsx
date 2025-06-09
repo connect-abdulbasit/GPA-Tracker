@@ -5,58 +5,6 @@ import { AddSemesterDialog } from "@/components/add-semester-dialog"
 import { SemesterCard } from "@/components/semester-card"
 import { fetchSemesters } from "@/app/actions/semester"
 
-// Dummy data
-const dummySemesters = [
-  {
-    id: "1",
-    name: "Fall 2024",
-    user_id: "user_123",
-    created_at: new Date(),
-    updated_at: new Date(),
-    courses: [
-      {
-        id: "1",
-        name: "Introduction to Computer Science",
-        credit_hours: 3,
-        gpa: 3.7,
-        semester_id: "1",
-        user_id: "user_123",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-      {
-        id: "2",
-        name: "Data Structures",
-        credit_hours: 4,
-        gpa: 3.5,
-        semester_id: "1",
-        user_id: "user_123",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-    ],
-  },
-  {
-    id: "2",
-    name: "Spring 2024",
-    user_id: "user_123",
-    created_at: new Date(),
-    updated_at: new Date(),
-    courses: [
-      {
-        id: "3",
-        name: "Algorithms",
-        credit_hours: 4,
-        gpa: 3.8,
-        semester_id: "2",
-        user_id: "user_123",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-    ],
-  },
-];
-
 async function getSemesters(userId: string) {
   const semesters = await fetchSemesters(userId)
   return semesters;

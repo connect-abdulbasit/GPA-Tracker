@@ -38,12 +38,11 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim() || !creditHours || !gpa) return
-
     const creditHoursNum = Number.parseInt(creditHours)
     const gpaNum = Number.parseFloat(gpa)
 
-    if (creditHoursNum <= 0 || gpaNum < 0 || gpaNum > 4) {
-      toast.error("Please enter valid values")
+    if (creditHoursNum <= 0 || gpaNum < 0 || gpaNum > 4 ) {
+      toast.error("Please enter valid values (GPA should have max 2 decimal places)")
       return
     }
 
