@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal, BookOpen, Trash2 } from "lucide-react"
 import { toast } from "sonner"
+import { deleteCourse } from "@/app/actions/course"
 
 interface CourseCardProps {
   course: {
@@ -31,10 +32,7 @@ export function CourseCard({ course }: CourseCardProps) {
 
     setLoading(true)
     try {
-      const { error } = await supabase.from("courses").delete().eq("id", course.id)
-
-      if (error) throw error
-
+      await deleteCourse(course.id)
       toast.success("Course deleted successfully!")
       router.refresh()
     } catch (error) {

@@ -48,16 +48,6 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
 
     setLoading(true)
     try {
-      // const { error } = await supabase.from("courses").insert([
-      //   {
-      //     semester_id: semesterId,
-      //     name: name.trim(),
-      //     credit_hours: creditHoursNum,
-      //     gpa: gpaNum,
-      //   },
-      // ])
-
-      // if (error) throw error
       await addCourse(semesterId, user?.id!, name.trim(), creditHoursNum, gpaNum)
 
       toast.success("Course added successfully!")

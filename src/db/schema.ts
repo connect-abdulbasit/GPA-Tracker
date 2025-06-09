@@ -18,6 +18,7 @@ export const semestersTable = pgTable('semesters', {
   user_id: text('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
   name: text('name').notNull(),
   gpa: real('gpa').default(0.00).notNull(),
+  total_credits: integer('total_credits').notNull(),
   active: boolean('active').default(true).notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),

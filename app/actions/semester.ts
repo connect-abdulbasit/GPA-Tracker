@@ -8,6 +8,8 @@ export const addSemester = async (userId: string, name: string) => {
   return await db.insert(semestersTable).values({
     user_id: userId,
     name,
+    total_credits: 0,
+    gpa: 0,
   });
 };
 
@@ -16,7 +18,10 @@ export const fetchSemesters = async (userId: string) => {
     .select()
     .from(semestersTable)
     .where(and(eq(semestersTable.user_id, userId), eq(semestersTable.active, true)))
-    .leftJoin(coursesTable, eq(semestersTable.id, coursesTable.semester_id))
+    .leftJoin(coursesTable, and(
+      eq(semestersTable.id, coursesTable.semester_id),
+      eq(coursesTable.active, true)
+    ))
     .execute();
 
   const semestersMap = new Map<string, any>();
@@ -46,9 +51,12 @@ export const fetchSemesterById = async (semesterId: string, userId: string) => {
     .select()
     .from(semestersTable)
     .where(
-      and(eq(semestersTable.id, semesterId), eq(semestersTable.user_id, userId))
+      and(eq(semestersTable.id, semesterId), eq(semestersTable.user_id, userId), eq(semestersTable.active, true))
     )
-    .leftJoin(coursesTable, eq(semestersTable.id, coursesTable.semester_id))
+    .leftJoin(coursesTable, and(
+      eq(semestersTable.id, coursesTable.semester_id),
+      eq(coursesTable.active, true)
+    ))
     .execute();
 
   const semestersMap = new Map<string, any>();

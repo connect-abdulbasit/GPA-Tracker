@@ -13,40 +13,6 @@ import { AddCourseDialog } from "@/components/add-course-dialog";
 import { CourseCard } from "@/components/course-card";
 import { notFound } from "next/navigation";
 import { fetchSemesterById } from "@/app/actions/semester";
-import { calculateSGPA } from "@/lib/gpa-calculations";
-
-// Dummy data
-const dummySemester = {
-  semester: {
-    id: "1",
-    name: "Fall 2024",
-    user_id: "user_123",
-    created_at: new Date(),
-    updated_at: new Date(),
-  },
-  courses: [
-    {
-      id: "1",
-      name: "Introduction to Computer Science",
-      credit_hours: 3,
-      gpa: 3.7,
-      semester_id: "1",
-      user_id: "user_123",
-      created_at: new Date(),
-      updated_at: new Date(),
-    },
-    {
-      id: "2",
-      name: "Data Structures",
-      credit_hours: 4,
-      gpa: 3.5,
-      semester_id: "1",
-      user_id: "user_123",
-      created_at: new Date(),
-      updated_at: new Date(),
-    },
-  ],
-};
 
 async function getSemesterDetails(semesterId: string, userId: string) {
   // Return dummy data instead of database query
@@ -64,8 +30,8 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
   const resolvedParams = await params;
   const { userId } = await auth();
   const semester = await getSemesterDetails(resolvedParams.id, userId!);
-  const sgpa = calculateSGPA(semester.courses)
-  const totalCredits = semester.courses.reduce((sum: number, course: any) => sum + course.credit_hours, 0)
+  // const sgpa = calculateSGPA(semester.courses)
+  // const totalCredits = semester.courses.reduce((sum: number, course: any) => sum + course.credit_hours, 0)
   if (!semester) {
     notFound();
   }
@@ -93,7 +59,7 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{semester.gpa||sgpa}</div>
+            <div className="text-2xl font-bold">{semester.gpa}</div>
             <p className="text-xs text-muted-foreground">Out of 4.0 scale</p>
           </CardContent>
         </Card>
@@ -115,7 +81,7 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
             <Plus className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{semester.credit_hours||totalCredits}</div>
+            <div className="text-2xl font-bold">{semester.total_credits}</div>
             <p className="text-xs text-muted-foreground">Total credits</p>
           </CardContent>
         </Card>
