@@ -18,6 +18,8 @@ interface SemesterCardProps {
     id: string
     user_id: string
     name: string
+    gpa: number
+    total_credits: number
     created_at: Date
     updated_at: Date
     courses: {
@@ -36,9 +38,6 @@ interface SemesterCardProps {
 export function SemesterCard({ semester }: SemesterCardProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-
-  const sgpa = calculateSGPA(semester.courses)
-  const totalCredits = semester.courses.reduce((sum, course) => sum + course.credit_hours, 0)
 
   const handleDelete = async () => {
     if (!confirm("Are you sure you want to delete this semester? This will also delete all courses in it.")) {
@@ -67,7 +66,7 @@ export function SemesterCard({ semester }: SemesterCardProps) {
         <div>
           <CardTitle className="text-lg">{semester.name}</CardTitle>
           <CardDescription>
-            {semester.courses.length} courses • {totalCredits} credits
+            {semester.courses.length} courses • {semester.total_credits} credits
           </CardDescription>
         </div>
         <DropdownMenu>
@@ -90,7 +89,7 @@ export function SemesterCard({ semester }: SemesterCardProps) {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">SGPA</span>
           </div>
-          <Badge variant={sgpa >= 3.5 ? "default" : sgpa >= 3.0 ? "secondary" : "destructive"}>{sgpa.toFixed(2)}</Badge>
+          <Badge variant={semester.gpa >= 3.5 ? "default" : semester.gpa >= 3.0 ? "secondary" : "destructive"}>{semester.gpa.toFixed(2)}</Badge>
         </div>
 
         <div className="space-y-2">

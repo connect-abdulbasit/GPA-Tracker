@@ -32,6 +32,7 @@ export const coursesTable = pgTable('courses', {
   credit_hours: integer('credit_hours').notNull(),
   gpa: real('gpa').default(0.00).notNull(),
   active: boolean('active').default(true).notNull(),
+  type: text('type').default('core').notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
 })

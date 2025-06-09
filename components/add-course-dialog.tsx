@@ -21,6 +21,13 @@ import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import { addCourse } from "@/app/actions/course"
 import { useUser } from "@clerk/nextjs"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface AddCourseDialogProps {
   semesterId: string
@@ -32,12 +39,13 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
   const [name, setName] = useState("")
   const [creditHours, setCreditHours] = useState("")
   const [gpa, setGpa] = useState("")
+  const [type, setType] = useState("core")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || !creditHours || !gpa) return
+    if (!name.trim() || !creditHours || !gpa || !type) return
     const creditHoursNum = Number.parseInt(creditHours)
     const gpaNum = Number.parseFloat(gpa)
 
@@ -48,12 +56,13 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
 
     setLoading(true)
     try {
-      await addCourse(semesterId, user?.id!, name.trim(), creditHoursNum, gpaNum)
+      await addCourse(semesterId, user?.id!, name.trim(), creditHoursNum, gpaNum, type)
 
       toast.success("Course added successfully!")
       setName("")
       setCreditHours("")
       setGpa("")
+      setType("core")
       setOpen(false)
       router.refresh()
     } catch (error) {
@@ -92,6 +101,21 @@ export function AddCourseDialog({ semesterId }: AddCourseDialogProps) {
                 className="col-span-3"
                 required
               />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="course-type" className="text-right">
+                Course Type
+              </Label>
+              <Select value={type} onValueChange={setType}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select course type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="core">Core</SelectItem>
+                  <SelectItem value="elective">Elective</SelectItem>
+                  <SelectItem value="non-credit">Non Credit</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="credit-hours" className="text-right">

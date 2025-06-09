@@ -2,16 +2,26 @@
 import { db } from "@/src/db"
 import { coursesTable, semestersTable } from "@/src/db/schema"
 import { and, eq } from "drizzle-orm"
+
 const calculateTotalCredits = (semesters: any) => {
-    return semesters.reduce((sum: number, semester: any) => sum + semester.total_credits, 0)
+    return semesters.reduce((sum: number, semester: any) =>
+         sum + semester.total_credits, 0)
 }
+
 const calculateCGPAandTotalCredits = (semesters: any) => {
-    console.log(semesters)
-    const totalCredits = calculateTotalCredits(semesters)
-    const totalGPA = semesters.reduce((sum: number, semester: any) => sum + semester.gpa * semester.total_credits, 0)
-    console.log(totalGPA, totalCredits)
-    return {cgpa: totalGPA / totalCredits, totalCredits: totalCredits}
+    const totalCredits =  semesters.reduce((sum: number, semester: any) => {
+        const creditCourses = semester.courses.filter((course: any) => course.type !== 'non-credit')
+        const semesterCredits = creditCourses.reduce((sum: number, course: any) => sum + course.credit_hours, 0)
+        return sum + semesterCredits
+    }, 0)
+    const totalGPA = semesters.reduce((sum: number, semester: any) => {
+        const creditCourses = semester.courses.filter((course: any) => course.type !== 'non-credit')
+        const semesterCredits = creditCourses.reduce((sum: number, course: any) => sum + course.credit_hours, 0)
+        return sum + semester.gpa * semesterCredits
+    }, 0)
+    return {cgpa: totalGPA / totalCredits}
 }
+
 export const getDashboardData = async (userId: string) => {
     const results = await db
     .select()
@@ -24,6 +34,7 @@ export const getDashboardData = async (userId: string) => {
       eq(coursesTable.active, true)
     ))
     .execute();
+
     const semestersMap = new Map<string, any>();
 
     for (const row of results) {
@@ -42,8 +53,9 @@ export const getDashboardData = async (userId: string) => {
         });
       }
     }
-    const {cgpa, totalCredits} = calculateCGPAandTotalCredits(Array.from(semestersMap.values()))
+
+    const {cgpa} = calculateCGPAandTotalCredits(Array.from(semestersMap.values()))
+    const totalCredits = calculateTotalCredits(Array.from(semestersMap.values()))
     const totalCourses = Array.from(semestersMap.values()).reduce((sum: number, semester: any) => sum + (semester.courses?.length || 0), 0)
-    console.log(cgpa, totalCredits, totalCourses, Array.from(semestersMap.values()).length)
-    return {cgpa: cgpa || 0, totalCredits: totalCredits || 0, totalCourses: totalCourses || 0, totalSemesters: Array.from(semestersMap.values()).length || 0}
+    return {cgpa: cgpa.toFixed(2) || 0, totalCredits: totalCredits || 0, totalCourses: totalCourses || 0, totalSemesters: Array.from(semestersMap.values()).length || 0}
 }   
