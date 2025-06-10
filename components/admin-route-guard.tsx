@@ -5,13 +5,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Lock } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useUserRole } from "@/hooks/useUserSync"
+import { HashLoader } from "react-spinners"
 
 export function AdminRouteGuard({ children }: { children: React.ReactNode }) {
-  const userRole = useUserRole()
+  const {userRole,loading} = useUserRole()
   const router = useRouter()
   const isAdmin = userRole === "admin"
-
-  if (!isAdmin) {
+if(loading){
+  return  <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
+  <HashLoader color="#4F46E5" />
+</div>
+}
+  if (!isAdmin && !loading) {
     return (
       <Card className="mx-auto max-w-md mt-8">
         <CardHeader>

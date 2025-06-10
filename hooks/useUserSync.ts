@@ -50,13 +50,15 @@ export const useUserData = () => {
 
 export const useUserRole = () => {
   const { user, isLoaded } = useUser()
+  const [loading, setLoading] = useState(true)
   const [userRole, setUserRole] = useState<any>(null)
   useEffect(() => {
     if (isLoaded && user) {
       getUser(user.id).then((data) => {
         setUserRole(data.role)
+        setLoading(false)
       })
     }
   }, [user, isLoaded])
-  return userRole
+  return {userRole,loading}
 }
