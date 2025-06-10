@@ -47,3 +47,16 @@ export const useUserData = () => {
   }, [user, isLoaded])
   return userData
 }
+
+export const useUserRole = () => {
+  const { user, isLoaded } = useUser()
+  const [userRole, setUserRole] = useState<any>(null)
+  useEffect(() => {
+    if (isLoaded && user) {
+      getUser(user.id).then((data) => {
+        setUserRole(data.role)
+      })
+    }
+  }, [user, isLoaded])
+  return userRole
+}
