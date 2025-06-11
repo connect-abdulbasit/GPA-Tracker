@@ -44,7 +44,7 @@ export const addCourse = async (
           total_credits: semestersTable.total_credits,
         })
         .from(semestersTable)
-        .where(eq(semestersTable.id, semesterId))
+        .where(and(eq(semestersTable.id, semesterId),eq(semestersTable.user_id,userId),eq(semestersTable.active,true)))
         .then(([result]) =>
           db
             .update(semestersTable)
@@ -52,7 +52,7 @@ export const addCourse = async (
               gpa: sgpa,
               total_credits: result.total_credits + creditHours,
             })
-            .where(eq(semestersTable.id, semesterId))
+            .where(and(eq(semestersTable.id, semesterId),eq(semestersTable.user_id,userId),eq(semestersTable.active,true)))
             .execute()
         ),
       db
@@ -76,14 +76,14 @@ export const addCourse = async (
           total_credits: semestersTable.total_credits,
         })
         .from(semestersTable)
-        .where(eq(semestersTable.id, semesterId))
+        .where(and(eq(semestersTable.id, semesterId),eq(semestersTable.user_id,userId),eq(semestersTable.active,true)))
         .then(([result]) =>
           db
             .update(semestersTable)
             .set({
               total_credits: result.total_credits + creditHours,
             })
-            .where(eq(semestersTable.id, semesterId))
+            .where(and(eq(semestersTable.id, semesterId),eq(semestersTable.user_id,userId),eq(semestersTable.active,true)))
             .execute()
         ),
       db
@@ -139,7 +139,7 @@ export const deleteCourse = async (courseId: string) => {
         gpa: semestersTable.gpa,
       })
       .from(semestersTable)
-      .where(eq(semestersTable.id, course.semester_id))
+      .where(and(eq(semestersTable.id, course.semester_id),eq(semestersTable.user_id,course.user_id),eq(semestersTable.active,true)))
       .execute();
     await db
       .update(semestersTable)
@@ -169,7 +169,7 @@ export const updateCourse = async (courseId: string, userId: string, name: strin
   ]);
   const [totalCredits] = await db.select({
     total_credits: semestersTable.total_credits,
-  }).from(semestersTable).where(eq(semestersTable.id, existingCourse[0].semester_id)).execute();
+  }).from(semestersTable).where(and(eq(semestersTable.id, existingCourse[0].semester_id),eq(semestersTable.user_id,userId),eq(semestersTable.active,true))).execute();
   await db.update(semestersTable).set({
     gpa: sgpa ,
     total_credits: totalCredits.total_credits - existingCourse[0].credit_hours + creditHours,
