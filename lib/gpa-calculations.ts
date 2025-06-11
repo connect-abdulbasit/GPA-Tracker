@@ -33,6 +33,11 @@ export function calculateCGPA(semesters: SemesterWithCourses[]): number {
   return calculateSGPA(allCourses)
 }
 
+export const calculateTotalCredits = (courses: {credit_hours: number}[]): number => {
+  return courses.reduce((sum, course) => sum + course.credit_hours, 0)
+}
+
+
 export const gradeScale = [
   { grade: "A+", gpa: 4.0, range: "90+" },
   { grade: "A", gpa: 4.0, range: "86 - 89.9" },

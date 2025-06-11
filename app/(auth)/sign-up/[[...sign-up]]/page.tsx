@@ -59,7 +59,7 @@ export default function SignUpPage() {
                     <Star className="h-5 w-5 text-green-600 dark:text-green-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">Free Forever</h3>
+                  <h3 className="font-semibold">Free Forever</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       No hidden fees, no premium plans. Everything is free.
                     </p>
@@ -75,7 +75,7 @@ export default function SignUpPage() {
                   <div>
                     <h3 className="font-semibold">Secure & Private</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Your data is encrypted and only accessible by you.
+                      Your academic data is encrypted and only accessible by you.
                     </p>
                   </div>
                 </CardContent>
@@ -87,13 +87,22 @@ export default function SignUpPage() {
                     <Zap className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold">Instant Setup</h3>
+                    <h3 className="font-semibold">Assessment Tracking</h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Get started in seconds and begin tracking immediately.
+                      Track individual assessments for ongoing courses.
                     </p>
                   </div>
                 </CardContent>
               </Card>
+            </div>
+
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 p-4 rounded-lg">
+              <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-2">What happens after sign-up?</h3>
+              <ol className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+                <li>1. Complete your academic profile</li>
+                <li>2. Add your university and department</li>
+                <li>3. Start tracking your GPA journey!</li>
+              </ol>
             </div>
           </div>
 
@@ -103,7 +112,7 @@ export default function SignUpPage() {
               <SignUp
                 routing="path"
                 path="/sign-up"
-                redirectUrl="/dashboard"
+                redirectUrl="/onboarding"
                 signInUrl="/sign-in"
                 appearance={{
                   elements: {

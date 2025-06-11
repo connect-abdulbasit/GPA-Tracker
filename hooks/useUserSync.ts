@@ -1,9 +1,7 @@
 'use client'
 
 import { getUser } from '@/app/actions/user'
-import { db, usersTable } from '@/src/db'
 import { useUser } from '@clerk/nextjs'
-import { eq } from 'drizzle-orm'
 import { useEffect, useState } from 'react'
 
 export function useUserSync() {
@@ -46,4 +44,32 @@ export const useUserData = () => {
     }
   }, [user, isLoaded])
   return userData
+}
+
+export const useUserRole = () => {
+  const { user, isLoaded } = useUser()
+  const [loading, setLoading] = useState(true)
+  const [userRole, setUserRole] = useState<any>(null)
+  useEffect(() => {
+    if (isLoaded && user) {
+      getUser(user.id).then((data) => {
+        setUserRole(data?.role||"student")
+        setLoading(false)
+      })
+    }
+  }, [user, isLoaded])
+  return {userRole,loading}
+}
+
+export function useProfileCompletion() {
+  const userData = useUserData()
+  const [profileComplete, setProfileComplete] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(true)
+  useEffect(() => {
+    if (userData) {
+      setProfileComplete(userData?.university_name && userData?.department)
+      setLoading(false)
+    }
+  }, [userData])
+  return {profileComplete,loading}
 }
