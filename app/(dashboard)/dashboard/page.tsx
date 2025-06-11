@@ -4,6 +4,7 @@ import { TrendingUp, BookOpen, GraduationCap, Target } from "lucide-react"
 import { GPATrendChart } from "@/components/gpa-trend-chart"
 import { CourseTypeGPAChart } from "@/components/course-type-gpa-chart"
 import { getCourseData, getDashboardData, getGpaTrendData } from "@/app/actions/dashboard"
+import { UserProfileDisplay } from "@/components/user-profile-display"
 
 export default async function DashboardPage() {
   const { userId } = await auth()
@@ -16,7 +17,7 @@ export default async function DashboardPage() {
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-sm sm:text-base text-muted-foreground">Welcome back! Here's an overview of your academic progress.</p>
       </div>
-
+      <UserProfileDisplay />
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

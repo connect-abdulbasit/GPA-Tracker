@@ -67,6 +67,13 @@ export default function SignInPage() {
               </Link>
             </p>
           </div>
+
+          <div className="mt-6 bg-blue-50 dark:bg-blue-950 p-4 rounded-lg max-w-md">
+            <p className="text-sm text-blue-800 dark:text-blue-200 text-center">
+              <strong>New users:</strong> After signing up, you'll complete your academic profile with university and
+              department information.
+            </p>
+          </div>
         </div>
       </div>
     </div>
