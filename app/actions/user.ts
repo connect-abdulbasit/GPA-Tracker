@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm"
 
 export const getUser = async (userId: string) => {
   try {
-    const user = await db.select().from(usersTable).where(eq(usersTable.id, userId)).execute()
+    const user = await db.update(usersTable).set({last_login:new Date()}).where(eq(usersTable.id,userId)).returning().execute()
     return user[0] || null
   } catch (error) {
     console.error('Error fetching user:', error)
@@ -25,7 +25,7 @@ export const isProfileComplete = async (userId: string) => {
 
 export const updateUserProfile = async (userId: string, data: any) => {
   try {
-    await db.update(usersTable).set(data).where(eq(usersTable.id, userId)).execute()
+    await db.update(usersTable).set({...data,last_login:new Date()}).where(eq(usersTable.id, userId)).execute()
   } catch (error) {
     console.error('Error updating user profile:', error)
   }

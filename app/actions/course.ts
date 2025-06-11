@@ -153,10 +153,25 @@ export const deleteCourse = async (courseId: string) => {
 };
 
 export const updateCourse = async (courseId: string, userId: string, name: string, creditHours: number, gpa: number, type: string) => {
-  return await db.update(coursesTable).set({
+ const course = await db.update(coursesTable).set({
     name,
     credit_hours: creditHours,
     gpa: gpa,
     type: type,
-  }).where(and(eq(coursesTable.id, courseId), eq(coursesTable.user_id, userId))).execute();
+  }).where(and(eq(coursesTable.id, courseId), eq(coursesTable.user_id, userId))).returning().execute();
+  const existingCourse = await db.select().from(coursesTable).where(and(eq(coursesTable.semester_id, course[0].semester_id), eq(coursesTable.user_id, userId),eq(coursesTable.active,true),ne(coursesTable.type,"non-credit"))).execute();
+  const sgpa = calculateSGPA([
+    ...existingCourse,
+    {
+      credit_hours: creditHours,
+      gpa: gpa,
+    },
+  ]);
+  const [totalCredits] = await db.select({
+    total_credits: semestersTable.total_credits,
+  }).from(semestersTable).where(eq(semestersTable.id, existingCourse[0].semester_id)).execute();
+  await db.update(semestersTable).set({
+    gpa: sgpa ,
+    total_credits: totalCredits.total_credits - existingCourse[0].credit_hours + creditHours,
+  }).where(eq(semestersTable.id, existingCourse[0].semester_id)).execute();
 };
