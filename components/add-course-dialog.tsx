@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -41,7 +40,7 @@ export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || !creditHours || !gpa || !courseType) return
+    if (!name.trim() || !creditHours || (!gpa && !isOngoing) || !courseType) return
     const creditHoursNum = Number.parseInt(creditHours)
     const gpaNum = Number.parseFloat(gpa)
 
@@ -88,10 +87,10 @@ export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps)
                 ? "Add a course to this ongoing semester. You'll add assessments later to calculate the final grade."
                 : "Add a course to this semester with its credit hours and final GPA."}
             </DialogDescription>
-          </DialogHeader>
+            </DialogHeader>
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="course-name" className="text-right">
+            <div className="grid gap-2">
+              <Label htmlFor="course-name">
                 Course Name
               </Label>
               <Input
@@ -99,16 +98,15 @@ export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps)
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g., Calculus I"
-                className="col-span-3"
                 required
               />
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="course-type" className="text-right">
+            <div className="grid gap-2">
+              <Label htmlFor="course-type">
                 Course Type
               </Label>
               <Select value={courseType} onValueChange={(value: "core" | "elective" | "non-credit") => setCourseType(value)}>
-                <SelectTrigger className="col-span-3">
+                <SelectTrigger>
                   <SelectValue placeholder="Select course type" />
                 </SelectTrigger>
                 <SelectContent>
@@ -118,8 +116,8 @@ export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps)
                 </SelectContent>
               </Select>
             </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="credit-hours" className="text-right">
+            <div className="grid gap-2">
+              <Label htmlFor="credit-hours">
                 Credit Hours
               </Label>
               <Input
@@ -130,13 +128,12 @@ export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps)
                 value={creditHours}
                 onChange={(e) => setCreditHours(e.target.value)}
                 placeholder="3"
-                className="col-span-3"
                 required
               />
             </div>
             {!isOngoing && (
-              <div className="grid grid-cols-4 items-center gap-4">
-                <Label htmlFor="gpa" className="text-right">
+              <div className="grid gap-2">
+                <Label htmlFor="gpa">
                   GPA
                 </Label>
                 <Input
@@ -148,13 +145,12 @@ export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps)
                   value={gpa}
                   onChange={(e) => setGpa(e.target.value)}
                   placeholder="4"
-                  className="col-span-3"
                   required
                 />
               </div>
             )}
             {isOngoing && (
-              <div className="col-span-4 text-sm text-muted-foreground bg-green-50 dark:bg-green-950 p-3 rounded-lg">
+              <div className="text-sm text-muted-foreground bg-green-50 dark:bg-green-950 p-3 rounded-lg">
                 <p className="font-medium text-green-800 dark:text-green-200">Ongoing Course</p>
                 <p className="text-green-700 dark:text-green-300">
                   Add assessments (quizzes, assignments, exams) to track your progress and calculate the final grade.

@@ -11,6 +11,8 @@ import { MoreHorizontal, BookOpen, Trash2, TrendingUp } from "lucide-react"
 import { AddAssessmentDialog } from "@/components/add-assessment-dialog"
 import { toast } from "sonner"
 import { deleteCourse } from "@/app/actions/course"
+import { deleteAssessment } from "@/app/actions/assessment"
+import { gradeScale } from "@/lib/gpa-calculations"
 
 interface OngoingCourseCardProps {
   course: any
@@ -24,7 +26,7 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
     if (course.assessments.length === 0) return { percentage: 0, weightageUsed: 0 }
 
     const totalWeightedScore = course.assessments.reduce((sum: number, assessment: any) => {
-      const percentage = (assessment.obtained_marks / assessment.total_marks) * 100
+      const percentage = (assessment.marks_obtained / assessment.total_marks) * 100
       return sum + (percentage * assessment.weightage) / 100
     }, 0)
 
@@ -35,8 +37,32 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
       weightageUsed: totalWeightage,
     }
   }
+  const calculateGPAFromPercentage = (percentage: number) => {
+    const roundedPercentage = Math.round(percentage)
+    console.log(roundedPercentage)
+    for (const grade of gradeScale) {
+      const range = grade.range.split(" - ")
+      if (range.length === 1) {
+        // Handle special cases like "90+" or "< 50"
+        if (range[0].endsWith("+") && roundedPercentage >= parseInt(range[0])) {
+          return grade.gpa
+        }
+        if (range[0].startsWith("<") && roundedPercentage < parseInt(range[0].split("<")[1])) {
+          return grade.gpa
+        }
+      } else {
+        const min = parseFloat(range[0])
+        const max = parseFloat(range[1])
+        if (roundedPercentage >= min && roundedPercentage <= max) {
+          return grade.gpa
+        }
+      }
+    }
+    return 0
+  }
 
   const { percentage, weightageUsed } = calculateCurrentGrade()
+  const gpa = weightageUsed === 100 ? calculateGPAFromPercentage(percentage) : null
 
   const handleDeleteCourse = async () => {
     if (!confirm("Are you sure you want to delete this course? This will also delete all assessments.")) {
@@ -62,7 +88,7 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
     }
 
     try {
-      // await deleteAssessment(assessmentId)
+      await deleteAssessment(assessmentId)
       toast.success("Assessment deleted successfully!")
       router.refresh()
     } catch (error) {
@@ -105,17 +131,26 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
               <TrendingUp className="h-4 w-4 mr-1" />
               Current Grade
             </span>
-            <span className="font-semibold">{percentage.toFixed(1)}%</span>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold">{percentage.toFixed(2)}%</span>
+              {gpa !== null && (
+                <Badge variant="secondary" className="font-medium">
+                  GPA: {gpa.toFixed(2)}
+                </Badge>
+              )}
+            </div>
           </div>
           <Progress value={percentage} className="h-2" />
-          <div className="text-xs text-muted-foreground">Weightage used: {weightageUsed.toFixed(1)}% / 100%</div>
+          <div className="text-xs text-muted-foreground">
+            Weightage used: {weightageUsed.toFixed(2)}% / 100%
+          </div>
         </div>
 
         {/* Assessments List */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Assessments</span>
-            <AddAssessmentDialog courseId={course.id} courseName={course.name} />
+            <AddAssessmentDialog courseId={course.id} courseName={course.name} semesterId={course.semester_id} userId={course.user_id} />
           </div>
 
           {course.assessments.length === 0 ? (
@@ -128,14 +163,14 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
               {course.assessments.map((assessment: any) => (
                 <div key={assessment.id} className="flex items-center justify-between text-sm p-2 bg-muted/50 rounded">
                   <div className="flex-1">
-                    <div className="font-medium">{assessment.title}</div>
+                    <div className="font-medium">{assessment.name}</div>
                     <div className="text-xs text-muted-foreground">
-                      {assessment.obtained_marks}/{assessment.total_marks} ({assessment.weightage}%)
+                      {assessment.marks_obtained}/{assessment.total_marks} ({assessment.weightage}%)
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Badge variant="outline" className="text-xs">
-                      {((assessment.obtained_marks / assessment.total_marks) * 100).toFixed(1)}%
+                      {((assessment.marks_obtained / assessment.total_marks) * 100).toFixed(2)}%
                     </Badge>
                     <Button
                       variant="ghost"

@@ -39,7 +39,36 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
   if (!semester) {
     notFound();
   }
-
+  const dummyCourse = {
+    id: "1",
+    name: "Introduction to Computer Science",
+    credit_hours: 3,
+    course_type: "Core",
+    assessments: [
+      {
+        id: "1",
+        title: "Midterm Exam",
+        obtained_marks: 85,
+        total_marks: 100,
+        weightage: 30
+      },
+      {
+        id: "2",
+        title: "Final Project",
+        obtained_marks: 90,
+        total_marks: 100,
+        weightage: 40
+      },
+      {
+        id: "3",
+        title: "Lab Assignments",
+        obtained_marks: 95,
+        total_marks: 100,
+        weightage: 30
+      }
+    ]
+  }
+  console.log(semester?.courses[0]?.assessments)
   return (
     <div className="space-y-8">
       <div className="flex items-center space-x-4">
@@ -145,8 +174,8 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
       ) : (
         <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 sm:px-0">
           {semester.courses.map((course: any) =>
-            isOngoing ? (
-              <OngoingCourseCard key={course.id} course={course} />
+            (isOngoing||course.assessments.length>0) ? (
+              <OngoingCourseCard key={course.id} course={{...course, assessments: course.assessments||[]}} />
             ) : (
               <CourseCard key={course.id} course={course} />
             )

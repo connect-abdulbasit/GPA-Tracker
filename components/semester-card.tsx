@@ -157,8 +157,8 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
                 <span className="truncate">{course.name}</span>
                 <div className="flex items-center space-x-2">
                   <span className="text-muted-foreground">{course.credit_hours}cr</span>
-                  {course.gpa !== null ? (
-                    <Badge variant="outline">{course.gpa.toFixed(1)}</Badge>
+                  {course.gpa ? (
+                    <Badge variant="outline">{course.gpa.toFixed(2)}</Badge>
                   ) : (
                     <Badge variant="secondary">Ongoing</Badge>
                   )}

@@ -4,7 +4,6 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -19,13 +18,16 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
+import { addAssessment } from "@/app/actions/assessment"
 
 interface AddAssessmentDialogProps {
   courseId: string
   courseName: string
+  semesterId: string
+  userId: string
 }
 
-export function AddAssessmentDialog({ courseId, courseName }: AddAssessmentDialogProps) {
+export function AddAssessmentDialog({ courseId, courseName, semesterId, userId }: AddAssessmentDialogProps) {
   const [open, setOpen] = useState(false)
   const [title, setTitle] = useState("")
   const [totalMarks, setTotalMarks] = useState("")
@@ -54,18 +56,16 @@ export function AddAssessmentDialog({ courseId, courseName }: AddAssessmentDialo
 
     setLoading(true)
     try {
-      const { error } = await supabase.from("assessments").insert([
-        {
-          course_id: courseId,
-          title: title.trim(),
-          total_marks: totalMarksNum,
-          obtained_marks: obtainedMarksNum,
-          weightage: weightageNum,
-        },
-      ])
-
-      if (error) throw error
-
+      const assessmentData={
+        course_id:courseId,
+        user_id:userId,
+        semester_id:semesterId,
+        name:title,
+        weightage:weightageNum,
+        total_marks:totalMarksNum,
+        marks_obtained:obtainedMarksNum,
+      }
+      await addAssessment(assessmentData)
       toast.success("Assessment added successfully!")
       setTitle("")
       setTotalMarks("")
@@ -74,7 +74,11 @@ export function AddAssessmentDialog({ courseId, courseName }: AddAssessmentDialo
       setOpen(false)
       router.refresh()
     } catch (error) {
-      toast.error("Failed to add assessment")
+      if(error instanceof Error){
+        toast.error(error.message)
+      }else{
+        toast.error("Failed to add assessment")
+      }
       console.error(error)
     } finally {
       setLoading(false)
@@ -135,7 +139,7 @@ export function AddAssessmentDialog({ courseId, courseName }: AddAssessmentDialo
                 id="obtained-marks"
                 type="number"
                 min="0"
-                step="0.1"
+                step="0.01"
                 value={obtainedMarks}
                 onChange={(e) => setObtainedMarks(e.target.value)}
                 placeholder="85"
