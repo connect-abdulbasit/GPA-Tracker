@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Target, TrendingUp, AlertCircle, CheckCircle, Plus, Trash2 } from "lucide-react"
 import type { ForecastCourse, ForecastResult } from "@/lib/gpa-forecast"
-import { calculateForecast, generateSampleFutureCourses } from "@/lib/gpa-forecast"
+import { calculateForecast } from "@/lib/gpa-forecast"
 import { GPAForecastChart } from "./gpa-forecast-chart"
 import { ImprovedScenariosChart } from "./improved-scenerios-chart"
 
@@ -25,7 +25,7 @@ export function GoalTracker({ semesters }: GoalTrackerProps) {
       : 0
 
   const [targetGPA, setTargetGPA] = useState<string>(currentCGPA.toFixed(2))
-  const [futureCourses, setFutureCourses] = useState<ForecastCourse[]>(generateSampleFutureCourses())
+  const [futureCourses, setFutureCourses] = useState<ForecastCourse[]>([])
 
   const forecast: ForecastResult = calculateForecast(semesters, Number.parseFloat(targetGPA) || currentCGPA, futureCourses)
 
@@ -181,10 +181,19 @@ export function GoalTracker({ semesters }: GoalTrackerProps) {
                   <Label>Credit Hours</Label>
                   <Input
                     type="number"
+                    max="10"
                     min="0"
-                    max="4"
-                    value={course.credit_hours}
-                    onChange={(e) => updateCourse(course.id, "credit_hours", Number.parseInt(e.target.value) || 3)}
+                    step="1"
+                    value={course.credit_hours || ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const numValue = Number.parseInt(value);
+                      if (value === "") {
+                        updateCourse(course.id, "credit_hours", "");
+                      } else if (numValue >= 0 && numValue <= 10) {
+                        updateCourse(course.id, "credit_hours", numValue);
+                      }
+                    }}
                   />
                 </div>
                 <div className="space-y-2">

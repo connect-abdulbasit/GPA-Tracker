@@ -87,37 +87,37 @@ function calculateScenarioGPA(
   return totalCredits > 0 ? totalPoints / totalCredits : 0
 }
 
-export function generateSampleFutureCourses(): ForecastCourse[] {
-  const courses = [
-    "Data Structures & Algorithms",
-    "Database Systems",
-    "Operating Systems",
-    "Computer Networks",
-    "Software Engineering",
-    "Artificial Intelligence",
-    "Machine Learning",
-    "Computer Architecture",
-    "Web Development",
-    "Mobile App Development",
-    "Cloud Computing",
-    "Cybersecurity",
-    "Distributed Systems",
-    "Computer Graphics",
-    "Natural Language Processing"
-  ]
+// export function generateSampleFutureCourses(): ForecastCourse[] {
+//   const courses = [
+//     "Data Structures & Algorithms",
+//     "Database Systems",
+//     "Operating Systems",
+//     "Computer Networks",
+//     "Software Engineering",
+//     "Artificial Intelligence",
+//     "Machine Learning",
+//     "Computer Architecture",
+//     "Web Development",
+//     "Mobile App Development",
+//     "Cloud Computing",
+//     "Cybersecurity",
+//     "Distributed Systems",
+//     "Computer Graphics",
+//     "Natural Language Processing"
+//   ]
 
-  const sampleCourses: ForecastCourse[] = []
+//   const sampleCourses: ForecastCourse[] = []
 
-  for (let i = 0; i < courses.length; i++) {
-      sampleCourses.push({
-        id: `future-${i}`,
-        name: courses[Math.floor(Math.random() * courses.length)],
-        credit_hours: Math.floor(Math.random() * 3) + 2, 
-        expected_gpa: 3.0, 
-        semester_name: `Future Semester`,
-      })
+//   for (let i = 0; i < courses.length; i++) {
+//       sampleCourses.push({
+//         id: `future-${i}`,
+//         name: courses[Math.floor(Math.random() * courses.length)],
+//         credit_hours: Math.floor(Math.random() * 3)+1, 
+//         expected_gpa: 3.0, 
+//         semester_name: `Future Semester`,
+//       })
     
-  }
+//   }
 
-  return sampleCourses
-}
+//   return sampleCourses
+// }
