@@ -27,7 +27,7 @@ export const getDashboardData = async (userId: string) => {
     .select()
     .from(semestersTable)
     .where(
-      and(eq(semestersTable.user_id, userId), eq(semestersTable.active, true))
+      and(eq(semestersTable.user_id, userId), eq(semestersTable.active, true), eq(semestersTable.status, "completed"))
     )
     .leftJoin(coursesTable, and(
       eq(semestersTable.id, coursesTable.semester_id),
@@ -69,7 +69,7 @@ export const getGpaTrendData = async (userId: string) => {
     eq(semestersTable.id, coursesTable.semester_id),
     eq(coursesTable.active, true)
   ))
-  .where(and(eq(semestersTable.user_id, userId), eq(semestersTable.active, true)))
+  .where(and(eq(semestersTable.user_id, userId), eq(semestersTable.active, true), eq(semestersTable.status, "completed")))
   .orderBy(asc(semestersTable.created_at))
   .execute();
 

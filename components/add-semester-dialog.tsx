@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -14,38 +14,60 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Plus } from "lucide-react"
-import { toast } from "sonner"
-import { addSemester } from "@/app/actions/semester"
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Plus } from "lucide-react";
+import { toast } from "sonner";
+import { addSemester } from "@/app/actions/semester";
 
 export function AddSemesterDialog() {
-  const [open, setOpen] = useState(false)
-  const [name, setName] = useState("")
-  const [loading, setLoading] = useState(false)
-  const { user } = useUser()
-  const router = useRouter()
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [status, setStatus] = useState<"ongoing" | "completed">("completed");
+  const [loading, setLoading] = useState(false);
+  const { user } = useUser();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!user || !name.trim()) return
+    e.preventDefault();
+    if (!user || !name.trim()) return;
 
-    setLoading(true)
+    setLoading(true);
     try {
-      const result = await addSemester(user.id, name.trim())
-      toast.success("Semester added successfully!")
-      setName("")
-      setOpen(false)
-      router.refresh()
+      await addSemester(user.id, name, status);
+      toast.success("Semester added successfully!");
+      setName("");
+      setStatus("completed");
+      setOpen(false);
+      router.refresh();
     } catch (error) {
-      toast.error("Failed to add semester")
-      console.error(error)
+      if (error instanceof Error) {
+        if (
+          error.message.includes("You already have an ongoing semester. Please complete it first.")
+        ) {
+          toast.error(
+            "You already have an ongoing semester. Please complete it first."
+          );
+        } else {
+          throw error;
+        }
+        return;
+      }
+
+      toast.error("Failed to add semester");
+      console.error(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -59,7 +81,9 @@ export function AddSemesterDialog() {
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Add New Semester</DialogTitle>
-            <DialogDescription>Create a new semester to track your courses and GPA.</DialogDescription>
+            <DialogDescription>
+              Create a new semester to track your courses and GPA.
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
@@ -75,6 +99,38 @@ export function AddSemesterDialog() {
                 required
               />
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="status" className="text-right">
+                Status
+              </Label>
+              <Select
+                value={status}
+                onValueChange={(value: "ongoing" | "completed") =>
+                  setStatus(value)
+                }
+              >
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select semester status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="ongoing">Ongoing</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            {status === "ongoing" && (
+              <div className="grid grid-cols-4 gap-4">
+                <div className="col-span-4 text-sm text-muted-foreground bg-blue-50 dark:bg-blue-950 p-3 rounded-lg">
+                  <p className="font-medium text-blue-800 dark:text-blue-200">
+                    Ongoing Semester
+                  </p>
+                  <p className="text-blue-700 dark:text-blue-300">
+                    For ongoing semesters, you'll add individual assessments
+                    instead of final GPAs for each course.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button type="submit" disabled={loading}>
@@ -84,5 +140,5 @@ export function AddSemesterDialog() {
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

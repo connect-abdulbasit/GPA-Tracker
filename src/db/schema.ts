@@ -53,3 +53,17 @@ export const resourcesTable = pgTable('resources', {
   tags: text('tags').array().default([]).notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
 })
+
+export const assessmentsTable = pgTable('assessments', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  course_id: uuid('course_id').references(() => coursesTable.id, { onDelete: 'cascade' }).notNull(),
+  user_id: text('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+  semester_id: uuid('semester_id').references(() => semestersTable.id, { onDelete: 'cascade' }).notNull(),
+  name: text('name').notNull(),
+  weightage: real('weightage').notNull(),
+  total_marks: real('total_marks').notNull(),
+  marks_obtained: real('marks_obtained').notNull(),
+  active: boolean('active').default(true).notNull(),
+  created_at: timestamp('created_at').defaultNow().notNull(),
+  updated_at: timestamp('updated_at').defaultNow().notNull(),
+})
