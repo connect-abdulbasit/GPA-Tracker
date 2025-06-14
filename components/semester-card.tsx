@@ -139,15 +139,25 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
         </DropdownMenu>
       </CardHeader>
       <CardContent className="space-y-4">
-        {!isOngoing && (
+        
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
               <span className="text-sm text-muted-foreground">SGPA</span>
             </div>
-              <Badge variant={semester.gpa >= 3.5 ? "default" : semester.gpa >= 3.0 ? "secondary" : "destructive"}>{semester.gpa.toFixed(2)}</Badge>
+            {!isOngoing ? (
+              <Badge variant={ semester.gpa >= 3.5
+                ? "default"
+                : semester.gpa >= 3.0
+                ? "secondary"
+                : semester.gpa >= 2.5
+                ? "default"
+                : "destructive"} className={`${semester.gpa >= 2.5 && semester.gpa < 3.0 ? "bg-yellow-500 hover:bg-yellow-600" : ""}`}>{semester.gpa.toFixed(2)}</Badge>
+            ):(
+              <Badge variant="secondary">Ongoing</Badge>
+            )
+            }
           </div>
-        )}
 
         <div className="space-y-2">
           {semester.courses.length === 0 ? (
