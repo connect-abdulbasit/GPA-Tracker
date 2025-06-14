@@ -171,10 +171,10 @@ export const marksAsCompleted = async (semesterId: string, userId: string) => {
     // Add to total credits regardless of course type
     totalCredits += course.credit_hours;
 
-    // Skip GPA calculation for non-credit courses
-    if (course.type === 'non-credit') {
-      continue;
-    }
+    // // Skip GPA calculation for non-credit courses
+    // if (course.type === 'non-credit') {
+    //   continue;
+    // }
 
     if (course.totalWeightage !== 100) {
       throw new Error(`Course "${course.name}" does not have 100% total weightage (current: ${course.totalWeightage}%)`);

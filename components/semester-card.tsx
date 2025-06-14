@@ -78,6 +78,10 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
       toast.success("Semester marked as completed!")
       router.refresh()
     } catch (error) {
+      if(error instanceof Error ){
+        toast.error(error.message)
+        return
+      }
       toast.error("Failed to update semester status")
       console.error(error)
     } finally {
