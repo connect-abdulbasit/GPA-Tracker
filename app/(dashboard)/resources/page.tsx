@@ -1,27 +1,13 @@
 import { auth } from "@clerk/nextjs/server"
-import { supabase } from "@/lib/supabase"
 import { AddResourceButton } from "@/components/add-resource-button"
 import { ResourcesList } from "@/components/resources-list"
 import { AdminRouteGuard } from "@/components/admin-route-guard"
+import { fetchResources } from "@/app/actions/resources"
 
-
-async function getResources(userId: string) {
-  const { data: resources } = await supabase
-    .from("resources")
-    .select(`
-      *,
-      course:course_id (*),
-      semester:semester_id (*)
-    `)
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false })
-
-  return resources || []
-}
 
 export default async function ResourcesPage() {
   const { userId } = await auth()
-  const resources = await getResources(userId!)
+  const { resources, totalCount, totalPages } = await fetchResources(userId!, 1, 9, "", "all")
 
   return (
     <AdminRouteGuard>
@@ -34,7 +20,11 @@ export default async function ResourcesPage() {
           <AddResourceButton />
         </div>
 
-        <ResourcesList initialResources={resources} />
+        <ResourcesList 
+          initialResources={resources} 
+          initialTotalCount={totalCount}
+          initialTotalPages={totalPages}
+        />
       </div>
     </AdminRouteGuard>
   )

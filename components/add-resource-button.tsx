@@ -5,7 +5,6 @@ import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { useUser } from "@clerk/nextjs"
-import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -22,6 +21,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Plus, Link2, Github, FileText, Youtube, ImageIcon, File } from "lucide-react"
 import { toast } from "sonner"
+import { addResource } from "@/app/actions/resources"
 
 export function AddResourceButton() {
   const [open, setOpen] = useState(false)
@@ -40,21 +40,16 @@ export function AddResourceButton() {
 
     setLoading(true)
     try {
-      const { error } = await supabase.from("resources").insert([
-        {
-          user_id: user.id,
-          title: title.trim(),
-          description: description.trim() || null,
-          resource_type: resourceType,
-          url: url.trim() || null,
-          tags: tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter((tag) => tag),
-        },
-      ])
-
-      if (error) throw error
+    await addResource({
+      user_id: user.id,
+      title: title.trim(),
+      description: description.trim(),
+      resource_type: resourceType as "link" | "github" | "pdf" | "document" | "video" | "image" | "other",
+      url: url.trim(),
+      tags: tags
+        .split(",")
+        .map((tag) => tag.trim())
+    })
 
       toast.success("Resource added successfully!")
       setTitle("")

@@ -11,6 +11,7 @@ import { ExternalLink, MoreHorizontal, Trash2, Calendar, BookOpen } from "lucide
 import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabase"
 import { toast } from "sonner"
+import Link from "next/link"
 
 interface ResourceCardProps {
   resource: any
@@ -55,10 +56,10 @@ export function ResourceCard({ resource, icon }: ResourceCardProps) {
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
-          <div className="flex items-center space-x-2">
+          <Link href={`/resources/${resource.id}`} className="flex items-center space-x-2 hover:opacity-80">
             <div className="p-1.5 bg-primary/10 rounded-md">{icon}</div>
             <CardTitle className="text-lg truncate">{resource.title}</CardTitle>
-          </div>
+          </Link>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="h-8 w-8">

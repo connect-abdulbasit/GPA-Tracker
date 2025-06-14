@@ -17,29 +17,14 @@ import {
   File,
 } from "lucide-react"
 import Link from "next/link"
-
-async function getResource(resourceId: string, userId: string) {
-  const { data: resource } = await supabase
-    .from("resources")
-    .select(`
-      *,
-      course:course_id (*),
-      semester:semester_id (*)
-    `)
-    .eq("id", resourceId)
-    .eq("user_id", userId)
-    .single()
-
-  return resource
-}
+import { fetchResourceById } from "@/app/actions/resources"
 
 export default async function ResourceDetailPage({
   params,
 }: {
   params: { id: string }
 }) {
-  const { userId } = await auth()
-  const resource = await getResource(params.id, userId!)
+  const resource = await fetchResourceById(params.id)
 
   if (!resource) {
     notFound()
@@ -62,8 +47,8 @@ export default async function ResourceDetailPage({
     }
   }
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString)
+  const formatDate = (dateInput: string | Date) => {
+    const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput
     return new Intl.DateTimeFormat("en-US", {
       year: "numeric",
       month: "long",
@@ -86,12 +71,6 @@ export default async function ResourceDetailPage({
               <Calendar className="h-4 w-4 mr-1" />
               <span>{formatDate(resource.created_at)}</span>
             </div>
-            {resource.course && (
-              <div className="flex items-center">
-                <BookOpen className="h-4 w-4 mx-1" />
-                <span>{resource.course.name}</span>
-              </div>
-            )}
           </div>
         </div>
       </div>
