@@ -35,7 +35,7 @@ export function ResourcesList({ initialResources, initialTotalCount, initialTota
   }, [searchQuery, activeTab])
 
   const handleSearch = async () => {
-    setIsLoading(true)
+    // setIsLoading(true)
     try {
       const result = await fetchResources(
         "", // userId will be handled by the server
@@ -56,7 +56,7 @@ export function ResourcesList({ initialResources, initialTotalCount, initialTota
 
   const handlePageChange = async (newPage: number) => {
     setCurrentPage(newPage)
-    setIsLoading(true)
+    // setIsLoading(true)
     try {
       const result = await fetchResources(
         "", // userId will be handled by the server
