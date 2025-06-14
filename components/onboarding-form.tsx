@@ -1,35 +1,47 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { GraduationCap, Building2, BookOpen } from "lucide-react"
-import { toast } from "sonner"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { updateUserProfile } from "@/app/actions/user"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { GraduationCap, Building2, BookOpen } from "lucide-react";
+import { toast } from "sonner";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { updateUserProfile } from "@/app/actions/user";
 
 // Popular universities and departments for quick selection
 const POPULAR_UNIVERSITIES = [
   // 🇵🇰 Pakistani Universities
   "NUST",
   "LUMS",
-  "FAST-NUCES", 
+  "FAST-NUCES",
   "UET Lahore",
   "IBA Karachi",
   "GIKI",
   "COMSATS",
-  "Air University", 
+  "Air University",
   "Bahria University",
   "PIEAS",
   "University of Karachi",
-  "Punjab University", 
+  "Punjab University",
   "Quaid-i-Azam University",
   "Aga Khan University",
   "Forman Christian College",
@@ -78,7 +90,7 @@ const POPULAR_UNIVERSITIES = [
   "Tsinghua University",
   "Peking University",
   "Australian National University",
-  "University of Tokyo"
+  "University of Tokyo",
 ];
 
 const POPULAR_DEPARTMENTS = [
@@ -134,47 +146,52 @@ const POPULAR_DEPARTMENTS = [
 ];
 
 export function OnboardingForm() {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     universityName: "",
     department: "",
     customUniversity: "",
     customDepartment: "",
-  })
-  const { user } = useUser()
-  const router = useRouter()
+  });
+  const { user } = useUser();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!user) return
+    e.preventDefault();
+    if (!user) return;
 
     const finalUniversityName =
-      formData.universityName === "Other" ? formData.customUniversity : formData.universityName
+      formData.universityName === "Other"
+        ? formData.customUniversity
+        : formData.universityName;
 
-    const finalDepartment = formData.department === "Other" ? formData.customDepartment : formData.department
+    const finalDepartment =
+      formData.department === "Other"
+        ? formData.customDepartment
+        : formData.department;
 
     if (!finalUniversityName.trim() || !finalDepartment.trim()) {
-      toast.error("Please fill in all required fields")
-      return
+      toast.error("Please fill in all required fields");
+      return;
     }
 
-    setLoading(true)
+    setLoading(true);
     try {
-   await updateUserProfile(user.id, {
-    university_name: finalUniversityName.trim(),
-    department: finalDepartment.trim(),
-    full_name: user.fullName || null,
-   })
-      toast.success("Profile setup completed!")
-      router.push("/dashboard")
-      router.refresh()
+      await updateUserProfile(user.id, {
+        university_name: finalUniversityName.trim(),
+        department: finalDepartment.trim(),
+        full_name: user.fullName || null,
+      });
+      toast.success("Profile setup completed!");
+      router.push("/dashboard");
+      router.refresh();
     } catch (error) {
-      toast.error("Failed to save profile information")
-      console.error(error)
+      toast.error("Failed to save profile information");
+      console.error(error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center p-4">
@@ -190,7 +207,8 @@ export function OnboardingForm() {
           </div>
           <CardTitle className="text-2xl">Complete Your Profile</CardTitle>
           <CardDescription>
-            Help us personalize your GPA tracking experience by providing your academic information
+            Help us personalize your GPA tracking experience by providing your
+            academic information
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -203,12 +221,14 @@ export function OnboardingForm() {
               </Label>
               <Select
                 value={formData.universityName}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, universityName: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, universityName: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select your university" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" side="bottom" align="start" className="max-h-[300px]">
                   {POPULAR_UNIVERSITIES.map((university) => (
                     <SelectItem key={university} value={university}>
                       {university}
@@ -221,7 +241,12 @@ export function OnboardingForm() {
                 <Input
                   placeholder="Enter your university name"
                   value={formData.customUniversity}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, customUniversity: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      customUniversity: e.target.value,
+                    }))
+                  }
                   required
                 />
               )}
@@ -235,12 +260,14 @@ export function OnboardingForm() {
               </Label>
               <Select
                 value={formData.department}
-                onValueChange={(value) => setFormData((prev) => ({ ...prev, department: value }))}
+                onValueChange={(value) =>
+                  setFormData((prev) => ({ ...prev, department: value }))
+                }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select your department" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent position="popper" side="bottom" align="start" className="max-h-[300px]">
                   {POPULAR_DEPARTMENTS.map((department) => (
                     <SelectItem key={department} value={department}>
                       {department}
@@ -253,7 +280,12 @@ export function OnboardingForm() {
                 <Input
                   placeholder="Enter your department/major"
                   value={formData.customDepartment}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, customDepartment: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      customDepartment: e.target.value,
+                    }))
+                  }
                   required
                 />
               )}
@@ -261,7 +293,9 @@ export function OnboardingForm() {
 
             {/* Welcome Message */}
             <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
-              <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Welcome to GPA Tracker! 🎓</h3>
+              <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+                Welcome to GPA Tracker! 🎓
+              </h3>
               <p className="text-sm text-blue-800 dark:text-blue-200">
                 Once you complete your profile, you'll be able to:
               </p>
@@ -280,5 +314,5 @@ export function OnboardingForm() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
