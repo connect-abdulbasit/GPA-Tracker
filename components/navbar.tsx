@@ -16,7 +16,7 @@ const navigation = [
   { name: "Semesters", href: "/semesters" },
   { name: "Grade Chart", href: "/grade-chart" },
   { name: "Forecast", href: "/forecast", badge: "Beta"},
-  { name: "Resources", href: "/resources", badge: "Coming Soon", disabled: true },
+  { name: "Resources", href: "/resources", badge: "Beta" ,disabled: false},
 ]
 
 export function Navbar() {

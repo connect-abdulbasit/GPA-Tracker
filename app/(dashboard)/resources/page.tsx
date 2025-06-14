@@ -1,7 +1,7 @@
 import { auth } from "@clerk/nextjs/server"
 import { AddResourceButton } from "@/components/add-resource-button"
 import { ResourcesList } from "@/components/resources-list"
-import { AdminRouteGuard } from "@/components/admin-route-guard"
+// import { AdminRouteGuard } from "@/components/admin-route-guard"
 import { fetchResources } from "@/app/actions/resources"
 
 
@@ -10,7 +10,7 @@ export default async function ResourcesPage() {
   const { resources, totalCount, totalPages } = await fetchResources(userId!, 1, 9, "", "all")
 
   return (
-    <AdminRouteGuard>
+    // <AdminRouteGuard>
       <div className="space-y-8">
         <div className="flex justify-between items-center">
           <div>
@@ -26,6 +26,6 @@ export default async function ResourcesPage() {
           initialTotalPages={totalPages}
         />
       </div>
-    </AdminRouteGuard>
+    // </AdminRouteGuard>
   )
 }
