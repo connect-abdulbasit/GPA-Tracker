@@ -165,8 +165,18 @@ export function OnboardingForm() {
     customUniversity: "",
     customDepartment: "",
   });
+  const [universitySearch, setUniversitySearch] = useState("");
+  const [departmentSearch, setDepartmentSearch] = useState("");
   const { user } = useUser();
   const router = useRouter();
+
+  const filteredUniversities = POPULAR_UNIVERSITIES.filter(university =>
+    university.toLowerCase().includes(universitySearch.toLowerCase())
+  );
+
+  const filteredDepartments = POPULAR_DEPARTMENTS.filter(department =>
+    department.toLowerCase().includes(departmentSearch.toLowerCase())
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -237,11 +247,25 @@ export function OnboardingForm() {
                   setFormData((prev) => ({ ...prev, universityName: value }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select your university" />
                 </SelectTrigger>
-                <SelectContent position="popper" side="bottom" align="start" className="max-h-[300px]">
-                  {POPULAR_UNIVERSITIES.map((university) => (
+                <SelectContent position="popper" side="bottom" align="start" className="w-full max-h-[300px]">
+                  <div className="sticky top-0 z-10 bg-background border-b px-3 py-2">
+                    <Input
+                      placeholder="Search university..."
+                      className="h-8"
+                      value={universitySearch}
+                      onChange={(e) => setUniversitySearch(e.target.value)}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </div>
+                  {filteredUniversities.map((university) => (
                     <SelectItem key={university} value={university}>
                       {university}
                     </SelectItem>
@@ -276,11 +300,25 @@ export function OnboardingForm() {
                   setFormData((prev) => ({ ...prev, department: value }))
                 }
               >
-                <SelectTrigger>
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select your department" />
                 </SelectTrigger>
-                <SelectContent position="popper" side="bottom" align="start" className="max-h-[300px]">
-                  {POPULAR_DEPARTMENTS.map((department) => (
+                <SelectContent position="popper" side="bottom" align="start" className="w-full max-h-[300px]">
+                  <div className="sticky top-0 z-10 bg-background border-b px-3 py-2">
+                    <Input
+                      placeholder="Search department..."
+                      className="h-8"
+                      value={departmentSearch}
+                      onChange={(e) => setDepartmentSearch(e.target.value)}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                      }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </div>
+                  {filteredDepartments.map((department) => (
                     <SelectItem key={department} value={department}>
                       {department}
                     </SelectItem>
