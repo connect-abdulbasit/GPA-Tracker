@@ -15,7 +15,7 @@ const navigation = [
   { name: "Dashboard", href: "/dashboard" },
   { name: "Semesters", href: "/semesters" },
   { name: "Grade Chart", href: "/grade-chart" },
-  { name: "Forecast", href: "/forecast", badge: "Coming Soon", disabled: true },
+  { name: "Forecast", href: "/forecast", badge: "Beta"},
   { name: "Resources", href: "/resources", badge: "Coming Soon", disabled: true },
 ]
 
