@@ -23,6 +23,7 @@ import { fetchSemesterById } from "@/app/actions/semester";
 import { SemesterActions } from "@/components/semester-actions";
 import { OngoingCourseCard } from "@/components/ongoing-course";
 import { Badge } from "@/components/ui/badge";
+import { gradeScale } from "@/lib/gpa-calculations";
 
 interface PageProps {
   params: Promise<{
@@ -39,35 +40,59 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
   if (!semester) {
     notFound();
   }
-  const dummyCourse = {
-    id: "1",
-    name: "Introduction to Computer Science",
-    credit_hours: 3,
-    course_type: "Core",
-    assessments: [
-      {
-        id: "1",
-        title: "Midterm Exam",
-        obtained_marks: 85,
-        total_marks: 100,
-        weightage: 30
-      },
-      {
-        id: "2",
-        title: "Final Project",
-        obtained_marks: 90,
-        total_marks: 100,
-        weightage: 40
-      },
-      {
-        id: "3",
-        title: "Lab Assignments",
-        obtained_marks: 95,
-        total_marks: 100,
-        weightage: 30
+  
+  const calculateOngoingSGPA = () => {
+    if (!isOngoing) return null;
+    
+    // Filter courses that have 100% weightage completed
+    const completedCourses = semester.courses.filter((course: any) => {
+      const totalWeightage = course.assessments?.reduce((sum: number, assessment: any) => 
+        sum + assessment.weightage, 0) || 0;
+      return totalWeightage === 100;
+    });
+
+    if (completedCourses.length === 0) return null;
+
+    // Calculate SGPA only for courses with 100% weightage
+    const totalPoints = completedCourses.reduce((sum: number, course: any) => {
+      const totalWeightedScore = course.assessments.reduce((sum: number, assessment: any) => {
+        const percentage = (assessment.marks_obtained / assessment.total_marks) * 100;
+        return sum + (percentage * assessment.weightage) / 100;
+      }, 0);
+      
+      // Convert percentage to GPA
+      const roundedPercentage = Math.round(totalWeightedScore);
+      let courseGPA = 0;
+      for (const grade of gradeScale) {
+        const range = grade.range.split(" - ");
+        if (range.length === 1) {
+          if (range[0].endsWith("+") && roundedPercentage >= parseInt(range[0])) {
+            courseGPA = grade.gpa;
+            break;
+          }
+          if (range[0].startsWith("<") && roundedPercentage < parseInt(range[0].split("<")[1])) {
+            courseGPA = grade.gpa;
+            break;
+          }
+        } else {
+          const min = parseFloat(range[0]);
+          const max = parseFloat(range[1]);
+          if (roundedPercentage >= min && roundedPercentage <= max) {
+            courseGPA = grade.gpa;
+            break;
+          }
+        }
       }
-    ]
-  }
+      
+      return sum + (courseGPA * course.credit_hours);
+    }, 0);
+
+    const totalCredits = completedCourses.reduce((sum: number, course: any) => 
+      sum + course.credit_hours, 0);
+
+    return totalCredits > 0 ? totalPoints / totalCredits : 0;
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex items-center space-x-4">
@@ -108,7 +133,7 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
       </div>
 
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 px-4 sm:px-0">
-        {!isOngoing && (
+        {!isOngoing ? (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
@@ -119,6 +144,35 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
             <CardContent>
               <div className="text-2xl font-bold">{semester.gpa.toFixed(2)}</div>
               <p className="text-xs text-muted-foreground">Out of 4.0 scale</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Current SGPA
+              </CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              {(() => {
+                const ongoingSGPA = calculateOngoingSGPA();
+                return ongoingSGPA !== null ? (
+                  <>
+                    <div className="text-2xl font-bold">{ongoingSGPA.toFixed(2)}</div>
+                    <p className="text-xs text-muted-foreground">
+                      Based on completed courses (100% weightage)
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="text-2xl font-bold">-</div>
+                    <p className="text-xs text-muted-foreground">
+                      No courses completed yet
+                    </p>
+                  </>
+                );
+              })()}
             </CardContent>
           </Card>
         )}
@@ -172,13 +226,20 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
         </Card>
       ) : (
         <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 sm:px-0">
-          {semester.courses.map((course: any) =>
-            (isOngoing||course.assessments.length>0) ? (
-              <OngoingCourseCard key={course.id} course={{...course, assessments: course.assessments||[]}} isOngoing={isOngoing} />
-            ) : (
-              <CourseCard key={course.id} course={course} />
-            )
-          )}
+          {semester.courses
+            .map((course: any) => ({
+              ...course,
+              totalWeightage: course.assessments?.reduce((sum: number, assessment: any) => 
+                sum + assessment.weightage, 0) || 0
+            }))
+            .sort((a: any, b: any) => b.totalWeightage - a.totalWeightage)
+            .map((course: any) =>
+              (isOngoing||course.assessments.length>0) ? (
+                <OngoingCourseCard key={course.id} course={{...course, assessments: course.assessments||[]}} isOngoing={isOngoing} />
+              ) : (
+                <CourseCard key={course.id} course={course} />
+              )
+            )}
         </div>
       )}
     </div>
