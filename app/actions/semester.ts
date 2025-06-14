@@ -22,6 +22,9 @@ export const addSemester = async (userId: string, name: string, status: "ongoing
 };
 
 export const fetchSemesters = async (userId: string) => {
+  return await db.select().from(semestersTable).where(and(eq(semestersTable.user_id, userId), eq(semestersTable.active, true), eq(semestersTable.status, "completed"))).orderBy(asc(semestersTable.created_at)).execute();
+}
+export const fetchSemestersWithCourses = async (userId: string) => {
   const results = await db
     .select()
     .from(semestersTable)

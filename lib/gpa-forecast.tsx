@@ -28,14 +28,19 @@ export interface ForecastResult {
 }
 
 export function calculateForecast(
-  currentSemesters: any[],
+  currentSemesters: {
+    id: string
+    name: string
+    gpa: number
+    total_credits: number
+    status: string
+  }[],
   targetCGPA: number,
   futureCourses: ForecastCourse[],
 ): ForecastResult {
   // Calculate current totals
-  const currentCourses = currentSemesters.flatMap((sem) => sem.courses)
-  const currentTotalPoints = currentCourses.reduce((sum, course) => sum + course.gpa * course.credit_hours, 0)
-  const currentTotalCredits = currentCourses.reduce((sum, course) => sum + course.credit_hours, 0)
+  const currentTotalPoints = currentSemesters.reduce((sum, semester) => sum + semester.gpa * semester.total_credits, 0)
+  const currentTotalCredits = currentSemesters.reduce((sum, semester) => sum + semester.total_credits, 0)
   const currentCGPA = currentTotalCredits > 0 ? currentTotalPoints / currentTotalCredits : 0
 
   // Calculate projected totals with future courses
@@ -82,37 +87,36 @@ function calculateScenarioGPA(
   return totalCredits > 0 ? totalPoints / totalCredits : 0
 }
 
-export function generateSampleFutureCourses(semesterCount = 2): ForecastCourse[] {
+export function generateSampleFutureCourses(): ForecastCourse[] {
   const courses = [
-    "Advanced Mathematics",
-    "Computer Science",
-    "Physics",
-    "Chemistry",
-    "Biology",
-    "Literature",
-    "History",
-    "Economics",
-    "Psychology",
-    "Philosophy",
-    "Statistics",
-    "Engineering",
-    "Business",
-    "Art",
-    "Music",
+    "Data Structures & Algorithms",
+    "Database Systems",
+    "Operating Systems",
+    "Computer Networks",
+    "Software Engineering",
+    "Artificial Intelligence",
+    "Machine Learning",
+    "Computer Architecture",
+    "Web Development",
+    "Mobile App Development",
+    "Cloud Computing",
+    "Cybersecurity",
+    "Distributed Systems",
+    "Computer Graphics",
+    "Natural Language Processing"
   ]
 
   const sampleCourses: ForecastCourse[] = []
 
-  for (let sem = 1; sem <= semesterCount; sem++) {
-    for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < courses.length; i++) {
       sampleCourses.push({
-        id: `future-${sem}-${i}`,
+        id: `future-${i}`,
         name: courses[Math.floor(Math.random() * courses.length)],
-        credit_hours: Math.floor(Math.random() * 3) + 2, // 2-4 credits
-        expected_gpa: 3.0, // Default expectation
-        semester_name: `Future Semester ${sem}`,
+        credit_hours: Math.floor(Math.random() * 3) + 2, 
+        expected_gpa: 3.0, 
+        semester_name: `Future Semester`,
       })
-    }
+    
   }
 
   return sampleCourses

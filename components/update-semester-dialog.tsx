@@ -26,7 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { fetchSemesters } from "@/app/actions/semester"
+import { fetchSemestersWithCourses } from "@/app/actions/semester"
 
 export function UpdateSemesterDialog() {
   const [open, setOpen] = useState(false)
@@ -41,7 +41,7 @@ export function UpdateSemesterDialog() {
     setOpen(newOpen)
     if (newOpen && user) {
       try {
-        const fetchedSemesters = await fetchSemesters(user.id)
+        const fetchedSemesters = await fetchSemestersWithCourses(user.id)
         setSemesters(fetchedSemesters.map(s => ({ id: s.id, name: s.name })))
       } catch (error) {
         console.error("Failed to fetch semesters:", error)

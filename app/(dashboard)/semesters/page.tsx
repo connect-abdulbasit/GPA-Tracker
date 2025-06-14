@@ -3,12 +3,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { BookOpen } from "lucide-react"
 import { AddSemesterDialog } from "@/components/add-semester-dialog"
 import { SemesterCard } from "@/components/semester-card"
-import { fetchSemesters } from "@/app/actions/semester"
+import { fetchSemestersWithCourses } from "@/app/actions/semester"
 // import { UpdateSemesterDialog } from "@/components/update-semester-dialog"
 
 export default async function SemestersPage() {
   const { userId } = await auth()
-  const semesters = await fetchSemesters(userId!)
+  const semesters = await fetchSemestersWithCourses(userId!)
 
   return (
     <div className="space-y-4 sm:space-y-8">

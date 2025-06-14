@@ -18,16 +18,16 @@ interface GoalTrackerProps {
 }
 
 export function GoalTracker({ semesters }: GoalTrackerProps) {
-  const [targetGPA, setTargetGPA] = useState<string>("3.5")
-  const [futureCourses, setFutureCourses] = useState<ForecastCourse[]>(generateSampleFutureCourses(2))
-
   const currentCGPA =
     semesters.length > 0
-      ? semesters.flatMap((s) => s.courses).reduce((sum, c) => sum + c.gpa * c.credit_hours, 0) /
-        semesters.flatMap((s) => s.courses).reduce((sum, c) => sum + c.credit_hours, 0)
+      ? semesters.reduce((sum, s) => sum + s.gpa * s.total_credits, 0) /
+        semesters.reduce((sum, s) => sum + s.total_credits, 0)
       : 0
 
-  const forecast: ForecastResult = calculateForecast(semesters, Number.parseFloat(targetGPA) || 3.5, futureCourses)
+  const [targetGPA, setTargetGPA] = useState<string>(currentCGPA.toFixed(2))
+  const [futureCourses, setFutureCourses] = useState<ForecastCourse[]>(generateSampleFutureCourses())
+
+  const forecast: ForecastResult = calculateForecast(semesters, Number.parseFloat(targetGPA) || currentCGPA, futureCourses)
 
   const progressPercentage = Math.min((currentCGPA / Number.parseFloat(targetGPA)) * 100, 100)
 
@@ -36,7 +36,7 @@ export function GoalTracker({ semesters }: GoalTrackerProps) {
       id: `future-${Date.now()}`,
       name: "",
       credit_hours: 3,
-      expected_gpa: 3.0,
+      expected_gpa: 0,
       semester_name: "Future Semester",
     }
     setFutureCourses([...futureCourses, newCourse])
@@ -181,8 +181,8 @@ export function GoalTracker({ semesters }: GoalTrackerProps) {
                   <Label>Credit Hours</Label>
                   <Input
                     type="number"
-                    min="1"
-                    max="6"
+                    min="0"
+                    max="4"
                     value={course.credit_hours}
                     onChange={(e) => updateCourse(course.id, "credit_hours", Number.parseInt(e.target.value) || 3)}
                   />
@@ -191,11 +191,19 @@ export function GoalTracker({ semesters }: GoalTrackerProps) {
                   <Label>Expected GPA</Label>
                   <Input
                     type="number"
+                    max="4.00"
                     min="0"
-                    max="4"
-                    step="0.1"
-                    value={course.expected_gpa}
-                    onChange={(e) => updateCourse(course.id, "expected_gpa", Number.parseFloat(e.target.value) || 3.0)}
+                    step="0.01"
+                    value={course.expected_gpa || ''}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const numValue = Number.parseFloat(value);
+                      if (value === "") {
+                        updateCourse(course.id, "expected_gpa", "");
+                      } else if (numValue >= 0 && numValue <= 4.00) {
+                        updateCourse(course.id, "expected_gpa", Number(numValue.toFixed(2)));
+                      }
+                    }}
                   />
                 </div>
                 <div className="space-y-2">
