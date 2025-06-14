@@ -1,7 +1,7 @@
 "use server"
 import { db } from "@/src/db"
 import { coursesTable, semestersTable } from "@/src/db/schema"
-import { and, asc, eq } from "drizzle-orm"
+import { and, asc, eq, ne } from "drizzle-orm"
 
 const calculateTotalCredits = (semesters: any) => {
     return semesters.reduce((sum: number, semester: any) =>
@@ -108,10 +108,11 @@ export const getCourseData = async (userId: string) => {
     type: coursesTable.type,
   })
   .from(coursesTable)
-  .where(and(eq(coursesTable.user_id, userId), eq(coursesTable.active, true)))
-  .leftJoin(semestersTable, and(
-    eq(coursesTable.semester_id, semestersTable.id),
-    eq(semestersTable.active, true)
+  .leftJoin(semestersTable, eq(coursesTable.semester_id, semestersTable.id))
+  .where(and(
+    eq(coursesTable.user_id, userId), 
+    eq(coursesTable.active, true),
+    ne(semestersTable.status, "ongoing")
   ))
   .orderBy(asc(coursesTable.created_at))
   .execute();
