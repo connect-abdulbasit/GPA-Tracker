@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, BookOpen, Trash2, TrendingUp } from "lucide-react"
+import { MoreHorizontal, BookOpen, Trash2, TrendingUp, Pencil } from "lucide-react"
 import { AddAssessmentDialog } from "@/components/add-assessment-dialog"
+import { EditAssessmentDialog } from "@/components/edit-assessment-dialog"
 import { toast } from "sonner"
 import { deleteCourse } from "@/app/actions/course"
 import { deleteAssessment } from "@/app/actions/assessment"
@@ -16,11 +17,13 @@ import { gradeScale } from "@/lib/gpa-calculations"
 
 interface OngoingCourseCardProps {
   course: any
+  isOngoing: boolean
 }
 
-export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
+export function OngoingCourseCard({ course, isOngoing }: OngoingCourseCardProps) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+  const [editingAssessment, setEditingAssessment] = useState<any>(null)
 
   const calculateCurrentGrade = () => {
     if (course.assessments.length === 0) return { percentage: 0, weightageUsed: 0 }
@@ -39,7 +42,6 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
   }
   const calculateGPAFromPercentage = (percentage: number) => {
     const roundedPercentage = Math.round(percentage)
-    console.log(roundedPercentage)
     for (const grade of gradeScale) {
       const range = grade.range.split(" - ")
       if (range.length === 1) {
@@ -62,7 +64,7 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
   }
 
   const { percentage, weightageUsed } = calculateCurrentGrade()
-  const gpa = weightageUsed === 100 ? calculateGPAFromPercentage(percentage) : null
+  const gpa = weightageUsed === 100 && isOngoing ? calculateGPAFromPercentage(percentage) : null
 
   const handleDeleteCourse = async () => {
     if (!confirm("Are you sure you want to delete this course? This will also delete all assessments.")) {
@@ -95,6 +97,9 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
       toast.error("Failed to delete assessment")
       console.error(error)
     }
+  }
+  const handleEditAssessment = (assessment: any) => {
+    setEditingAssessment(assessment)
   }
 
   return (
@@ -133,7 +138,11 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
             </span>
             <div className="flex items-center gap-2">
               <span className="font-semibold">{percentage.toFixed(2)}%</span>
-              {gpa !== null && (
+              {!isOngoing ? (
+                <Badge variant="secondary" className="font-medium">
+                  GPA: {course.gpa.toFixed(2)}
+                </Badge>
+              ) : gpa !== null && (
                 <Badge variant="secondary" className="font-medium">
                   GPA: {gpa.toFixed(2)}
                 </Badge>
@@ -172,6 +181,16 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
                     <Badge variant="outline" className="text-xs">
                       {((assessment.marks_obtained / assessment.total_marks) * 100).toFixed(2)}%
                     </Badge>
+                    {isOngoing && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                      onClick={() => handleEditAssessment(assessment)}
+                    >
+                      <Pencil className="h-3 w-3" />
+                    </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="icon"
@@ -194,6 +213,16 @@ export function OngoingCourseCard({ course }: OngoingCourseCardProps) {
           </div>
         )}
       </CardContent>
+      {editingAssessment && isOngoing && (
+        <EditAssessmentDialog
+          assessment={editingAssessment}
+          courseId={course.id}
+          semesterId={course.semester_id}
+          userId={course.user_id}
+          open={!!editingAssessment}
+          onOpenChange={(open) => !open && setEditingAssessment(null)}
+        />
+      )}
     </Card>
   )
 }

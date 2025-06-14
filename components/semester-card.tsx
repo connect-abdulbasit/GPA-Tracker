@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { calculateSGPA } from "@/lib/gpa-calculations"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -11,8 +10,9 @@ import { MoreHorizontal, BookOpen, TrendingUp, Trash2, Clock, CheckCircle, Squar
 import Link from "next/link"
 import { AddCourseDialog } from "@/components/add-course-dialog"
 import { toast } from "sonner"
-import { deleteSemester } from "@/app/actions/semester"
+import { deleteSemester, marksAsCompleted } from "@/app/actions/semester"
 import { EditSemesterDialog } from "./edit-semester-dialog"
+import { calculateSGPA } from "@/lib/gpa-calculations"
 
 interface SemesterCardProps {
   semester: {
@@ -71,12 +71,9 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
     if (!confirm("Mark this semester as completed? You won't be able to add more assessments.")) {
       return
     }
-
     setLoading(true)
     try {
-    //   const { error } = await supabase.from("semesters").update({ status: "completed" }).eq("id", semester.id)
-
-    //   if (error) throw error
+      await marksAsCompleted(semester.id, userId)
 
       toast.success("Semester marked as completed!")
       router.refresh()
@@ -157,7 +154,7 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
                 <span className="truncate">{course.name}</span>
                 <div className="flex items-center space-x-2">
                   <span className="text-muted-foreground">{course.credit_hours}cr</span>
-                  {course.gpa ? (
+                  {semester.status === "completed" ? (
                     <Badge variant="outline">{course.gpa.toFixed(2)}</Badge>
                   ) : (
                     <Badge variant="secondary">Ongoing</Badge>
