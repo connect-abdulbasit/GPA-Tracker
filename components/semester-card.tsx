@@ -79,6 +79,18 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
       router.refresh()
     } catch (error) {
       if(error instanceof Error ){
+        if(error.message === "Semester not found"){
+          toast.error("Semester not found")
+          return
+        }
+        if(error.message === "Semester already completed"){
+          toast.error("Semester already completed")
+          return
+        }
+        if(error.message.includes("does not have 100% total weightage")){
+          toast.error("Please add all assessments to the course to mark it as completed")
+          return
+        }
         toast.error(error.message)
         return
       }
