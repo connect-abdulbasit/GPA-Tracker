@@ -19,7 +19,7 @@ const calculateCGPAandTotalCredits = (semesters: any) => {
         const semesterCredits = creditCourses.reduce((sum: number, course: any) => sum + course.credit_hours, 0)
         return sum + semester.gpa * semesterCredits
     }, 0)
-    return {cgpa: totalGPA / totalCredits}
+    return {cgpa: totalGPA / totalCredits || 0}
 }
 
 export const getDashboardData = async (userId: string) => {
