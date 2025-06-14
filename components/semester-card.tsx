@@ -154,7 +154,7 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
                 ? "default"
                 : "destructive"} className={`${semester.gpa >= 2.5 && semester.gpa < 3.0 ? "bg-yellow-500 hover:bg-yellow-600" : ""}`}>{semester.gpa.toFixed(2)}</Badge>
             ):(
-              <Badge variant="secondary">Ongoing</Badge>
+              <Badge variant="default">Ongoing</Badge>
             )
             }
           </div>
