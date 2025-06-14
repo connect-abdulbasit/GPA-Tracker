@@ -12,11 +12,11 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useUserData } from "@/hooks/useUserSync"
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard" },
-  { name: "Semesters", href: "/semesters" },
-  { name: "Grade Chart", href: "/grade-chart" },
-  { name: "Forecast", href: "/forecast", badge: "Beta"},
-  { name: "Resources", href: "/resources", badge: "Beta" ,disabled: false},
+  { name: "Dashboard", href: "/dashboard", disabled: false, badge: undefined },
+  { name: "Semesters", href: "/semesters", disabled: false, badge: undefined },
+  { name: "Grade Chart", href: "/grade-chart", disabled: false, badge: undefined },
+  { name: "Forecast", href: "/forecast", disabled: false, badge: undefined },
+  { name: "Resources", href: "/resources", disabled: false, badge: undefined },
 ]
 
 export function Navbar() {
