@@ -7,9 +7,10 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, BookOpen, Trash2, TrendingUp, Pencil } from "lucide-react"
+import { MoreHorizontal, BookOpen, Trash2, TrendingUp, Pencil, SquarePen } from "lucide-react"
 import { AddAssessmentDialog } from "@/components/add-assessment-dialog"
 import { EditAssessmentDialog } from "@/components/edit-assessment-dialog"
+import { EditCourseDialog } from "@/components/edit-course-dialog"
 import { toast } from "sonner"
 import { deleteCourse } from "@/app/actions/course"
 import { deleteAssessment } from "@/app/actions/assessment"
@@ -22,6 +23,7 @@ interface OngoingCourseCardProps {
 
 export function OngoingCourseCard({ course, isOngoing }: OngoingCourseCardProps) {
   const [loading, setLoading] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
   const router = useRouter()
   const [editingAssessment, setEditingAssessment] = useState<any>(null)
 
@@ -121,6 +123,10 @@ export function OngoingCourseCard({ course, isOngoing }: OngoingCourseCardProps)
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setEditDialogOpen(true)}>
+              <SquarePen className="h-4 w-4 mr-2" />
+              Edit Course
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={handleDeleteCourse} disabled={loading}>
               <Trash2 className="h-4 w-4 mr-2" />
               Delete Course
@@ -223,6 +229,12 @@ export function OngoingCourseCard({ course, isOngoing }: OngoingCourseCardProps)
           onOpenChange={(open) => !open && setEditingAssessment(null)}
         />
       )}
+      <EditCourseDialog 
+        course={course} 
+        open={editDialogOpen} 
+        onOpenChange={setEditDialogOpen}
+        disableGpaEdit={true}
+      />
     </Card>
   )
 }

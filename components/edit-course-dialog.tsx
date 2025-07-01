@@ -34,9 +34,10 @@ interface EditCourseDialogProps {
   }
   open: boolean
   onOpenChange: (open: boolean) => void
+  disableGpaEdit?: boolean
 }
 
-export function EditCourseDialog({ course, open, onOpenChange }: EditCourseDialogProps) {
+export function EditCourseDialog({ course, open, onOpenChange, disableGpaEdit = false }: EditCourseDialogProps) {
   const [name, setName] = useState(course.name)
   const [creditHours, setCreditHours] = useState(course.credit_hours.toString())
   const [gpa, setGpa] = useState(course.gpa.toString())
@@ -138,8 +139,14 @@ export function EditCourseDialog({ course, open, onOpenChange }: EditCourseDialo
                 placeholder="4"
                 className="col-span-3"
                 required
+                disabled={disableGpaEdit}
               />
             </div>
+            {disableGpaEdit && (
+              <div className="text-xs text-muted-foreground text-center">
+                GPA is automatically calculated from assessments for courses
+              </div>
+            )}
           </div>
           <DialogFooter>
             <Button type="submit" disabled={loading}>
