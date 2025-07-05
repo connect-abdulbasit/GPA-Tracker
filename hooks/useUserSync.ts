@@ -1,75 +1,79 @@
 'use client'
 
 import { getUser } from '@/app/actions/user'
-import { useUser } from '@clerk/nextjs'
+import { useSession } from '@/lib/auth-client'
 import { useEffect, useState } from 'react'
 
-export function useUserSync() {
-  const { user, isLoaded } = useUser()
-
-  useEffect(() => {
-    if (isLoaded && user) {
-      fetch('/api/users/sync', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user }),
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            console.log('User synced with database')
-          } else {
-            console.error('Failed to sync user:', data.error)
-          }
-        })
-        .catch((error) => {
-          console.error('Failed to sync user:', error)
-        })
-    }
-  }, [user, isLoaded])
-
-  return { user, isLoaded }
-} 
-
 export const useUserData = () => {
-  const { user, isLoaded } = useUser()
+  const { data: session, isPending } = useSession()
+  const [loading, setLoading] = useState(true)
   const [userData, setUserData] = useState<any>(null)
+  
   useEffect(() => {
-    if (isLoaded && user) {
-      getUser(user.id).then((data) => {
-        setUserData(data)
-      })
+    const fetchUserData = async () => {
+      if (session?.user?.id) {
+        try {
+          setLoading(true)
+          const data = await getUser(session.user.id)
+          setUserData(data)
+        } catch (error) {
+          console.error('Error fetching user data:', error)
+        } finally {
+          setLoading(false)
+        }
+      } else if (!isPending) {
+        // If no session and not pending, set loading to false
+        setLoading(false)
+        setUserData(null)
+      }
     }
-  }, [user, isLoaded])
-  return userData
+
+    fetchUserData()
+  }, [session?.user?.id, isPending]) // Add isPending to dependencies
+
+  return { userData, loading }
 }
 
 export const useUserRole = () => {
-  const { user, isLoaded } = useUser()
+  const { data: session, isPending } = useSession()
   const [loading, setLoading] = useState(true)
   const [userRole, setUserRole] = useState<any>(null)
+  
   useEffect(() => {
-    if (isLoaded && user) {
-      getUser(user.id).then((data) => {
-        setUserRole(data?.role||"student")
+    const fetchUserRole = async () => {
+      if (session?.user?.id) {
+        try {
+          setLoading(true)
+          const data = await getUser(session.user.id)
+          setUserRole(data?.role || "student")
+        } catch (error) {
+          console.error('Error fetching user role:', error)
+        } finally {
+          setLoading(false)
+        }
+      } else if (!isPending) {
         setLoading(false)
-      })
+        setUserRole(null)
+      }
     }
-  }, [user, isLoaded])
-  return {userRole,loading}
+
+    fetchUserRole()
+  }, [session?.user?.id, isPending])
+  
+  return { userRole, loading }
 }
 
 export function useProfileCompletion() {
-  const userData = useUserData()
+  const { userData, loading } = useUserData()
   const [profileComplete, setProfileComplete] = useState<boolean>(false)
-  const [loading, setLoading] = useState<boolean>(true)
+  
   useEffect(() => {
-    if (userData) {
-      setProfileComplete(userData?.university_name && userData?.department)
-      setLoading(false)
+    if (!loading && userData) {
+      setProfileComplete(!!(userData?.university_name && userData?.department))
+    } else if (!loading && !userData) {
+      setProfileComplete(false)
     }
-  }, [userData])
-  return {profileComplete,loading}
+  }, [userData, loading])
+  
+  return { profileComplete, loading }
 }

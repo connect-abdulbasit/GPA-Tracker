@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  serverExternalPackages: ['@clerk/nextjs']
+  experimental: {
+    serverComponentsExternalPackages: ['better-auth']
+  }
 };
 
 module.exports = nextConfig;

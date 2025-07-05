@@ -1,10 +1,65 @@
-import { SignUp } from "@clerk/nextjs"
-import { GraduationCap, ArrowLeft, Star, Shield, Zap } from "lucide-react"
+"use client"
+
+import { GraduationCap, ArrowLeft, Star, Shield, Zap, Mail, Lock, User, Github, Chrome } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { useState } from "react"
+import { signUp, authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 export default function SignUpPage() {
+  const [name, setName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
+  const router = useRouter()
+
+  const handleEmailSignUp = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setError("")
+
+    try {
+      const result = await signUp.email({ name, email, password })
+      if (result.error) {
+        setError(result.error.message || "An error occurred during sign up")
+      } else {
+        router.push("/onboarding")
+      }
+    } catch (err) {
+      setError("An error occurred during sign up")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleGitHubSignUp = async () => {
+    setIsLoading(true)
+    setError("")
+    await authClient.signIn.social({
+      provider: "github",
+      callbackURL: "/onboarding",
+      errorCallbackURL: "/error",
+      newUserCallbackURL: "/onboarding",
+    })
+  }
+
+  const handleGoogleSignUp = async () => {
+    setIsLoading(true)
+    setError("")
+    await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/onboarding",
+      errorCallbackURL: "/error",
+      newUserCallbackURL: "/onboarding",
+    })
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
       {/* Animated Grid Background */}
@@ -108,20 +163,97 @@ export default function SignUpPage() {
 
           {/* Right Side - Sign Up Form */}
           <div className="lg:order-2 order-1 flex flex-col items-center">
-            <div className="w-full max-w-md">
-              <SignUp
-                routing="path"
-                path="/sign-up"
-                redirectUrl="/onboarding"
-                signInUrl="/sign-in"
-                appearance={{
-                  elements: {
-                    rootBox: "mx-auto",
-                    card: "shadow-lg border-0",
-                  },
-                }}
-              />
-            </div>
+            <Card className="w-full max-w-md">
+              <CardHeader>
+                <CardTitle>Create Account</CardTitle>
+                <CardDescription>Enter your details to get started</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <form onSubmit={handleEmailSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="Enter your full name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="Enter your email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        id="password"
+                        type="password"
+                        placeholder="Create a password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  {error && (
+                    <div className="text-sm text-red-600 dark:text-red-400">
+                      {error}
+                    </div>
+                  )}
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? "Creating account..." : "Create Account"}
+                  </Button>
+                </form>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <Separator className="w-full" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => handleGitHubSignUp()}
+                    disabled={isLoading}
+                  >
+                    <Github className="mr-2 h-4 w-4" />
+                    GitHub
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleGoogleSignUp()}
+                    disabled={isLoading}
+                  >
+                    <Chrome className="mr-2 h-4 w-4" />
+                    Google
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
 
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">

@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import { addCourse } from "@/app/actions/course"
-import { useUser } from "@clerk/nextjs"
+import { useAuth } from "@/lib/use-auth"
 
 
 interface AddCourseDialogProps {
@@ -29,7 +29,7 @@ interface AddCourseDialogProps {
 }
 
 export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps) {
-  const { user } = useUser()
+  const { session } = useAuth()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState("")
   const [creditHours, setCreditHours] = useState("")
@@ -51,7 +51,7 @@ export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps)
 
     setLoading(true)
     try {
-      await addCourse(semesterId, user?.id!, name.trim(), creditHoursNum, gpaNum, courseType)
+      await addCourse(semesterId, session?.user?.id!, name.trim(), creditHoursNum, gpaNum, courseType)
 
       toast.success("Course added successfully!")
       setName("")

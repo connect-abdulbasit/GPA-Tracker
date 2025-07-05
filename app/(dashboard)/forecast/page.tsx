@@ -1,11 +1,17 @@
-import { auth } from "@clerk/nextjs/server"
 import { GoalTracker } from "@/components/goal-tracker"
 // import { AdminRouteGuard } from "@/components/admin-route-guard"
+import { authClient } from "@/lib/auth-client"
+import { redirect } from "next/navigation"
 import { fetchSemesters } from "@/app/actions/semester"
 
 export default async function ForecastPage() {
-  const { userId } = await auth()
-  const semesters = await fetchSemesters(userId!)
+  const session = await authClient.getSession()
+  const semesters = await fetchSemesters(session?.data?.user?.id || "")
+
+  if (!session?.data?.user) {
+    redirect("/sign-in")
+  }
+
   return (
     // <AdminRouteGuard>
       <div className="space-y-8">
@@ -21,3 +27,4 @@ export default async function ForecastPage() {
     // </AdminRouteGuard> 
   )
 }
+

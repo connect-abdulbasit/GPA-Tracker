@@ -1,20 +1,21 @@
 import type React from "react"
-import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
+import { headers } from "next/headers"
 import { Navbar } from "@/components/navbar"
 import { Suspense } from "react"
 import Loading from "./loading"
 import { ProfileCompletionWrapper } from "@/components/ProfileCompletionWrapper"
+import { auth } from "@/auth"
 
 export default async function DashboardLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const { userId } = await auth()
-
-  if (!userId) {
-    redirect("/")
+  const session = await auth.api.getSession({ headers: await headers() })
+  
+  if (!session?.user) {
+    redirect("/sign-in")
   }
 
   return (
@@ -27,5 +28,4 @@ export default async function DashboardLayout({
     </ProfileCompletionWrapper>
     </div>
   )
-  
 }

@@ -1,13 +1,17 @@
-import { auth } from "@clerk/nextjs/server"
 import { AddResourceButton } from "@/components/add-resource-button"
 import { ResourcesList } from "@/components/resources-list"
 // import { AdminRouteGuard } from "@/components/admin-route-guard"
 import { fetchResources } from "@/app/actions/resources"
-
+import { authClient } from "@/lib/auth-client"
+import { redirect } from "next/navigation"
 
 export default async function ResourcesPage() {
-  const { userId } = await auth()
-  const { resources, totalCount, totalPages } = await fetchResources(userId!, 1, 9, "", "all")
+  const session = await authClient.getSession()
+  const { resources, totalCount, totalPages } = await fetchResources(session?.data?.user?.id || "", 1, 9, "", "all")
+
+  if (!session?.data?.user) {
+    redirect("/sign-in")
+  }
 
   return (
     // <AdminRouteGuard>

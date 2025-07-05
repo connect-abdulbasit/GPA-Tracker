@@ -1,21 +1,21 @@
 "use server"
 import { db } from "@/src/db"
-import { usersTable } from "@/src/db/schema"
+import { user } from "@/auth-schema"
 import { eq } from "drizzle-orm"
 
-export const getUser = async (userId: string) => {
-  try {
-    const user = await db.update(usersTable).set({last_login:new Date()}).where(eq(usersTable.id,userId)).returning().execute()
-    return user[0] || null
-  } catch (error) {
-    console.error('Error fetching user:', error)
-    return null
-  }
+export async function getUser(userId: string) {
+  const userData = await db.select().from(user).where(eq(user.id, userId)).execute()
+  return userData[0]
+}
+
+export async function updateLastLogin(userId: string) {
+  const userUpdated = await db.update(user).set({last_login:new Date()}).where(eq(user.id,userId)).returning().execute()
+  return userUpdated[0]
 }
 
 export const isProfileComplete = async (userId: string) => {
   try {
-    const user = await getUser(userId)
+    const user = await updateLastLogin(userId)
     return !!user && !!user.university_name && !!user.department
   } catch (error) {
     console.error('Error checking profile completion:', error)
@@ -23,10 +23,6 @@ export const isProfileComplete = async (userId: string) => {
   }
 }
 
-export const updateUserProfile = async (userId: string, data: any) => {
-  try {
-    await db.update(usersTable).set({...data,last_login:new Date()}).where(eq(usersTable.id, userId)).execute()
-  } catch (error) {
-    console.error('Error updating user profile:', error)
-  }
+export async function updateUserProfile(userId: string, data: any) {
+  await db.update(user).set({...data,last_login:new Date()}).where(eq(user.id, userId)).execute()
 }

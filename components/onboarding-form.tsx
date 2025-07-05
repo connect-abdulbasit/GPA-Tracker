@@ -4,7 +4,6 @@ import type React from "react";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -157,17 +156,21 @@ const POPULAR_DEPARTMENTS = [
   "Other",
 ];
 
-export function OnboardingForm() {
+interface OnboardingFormProps {
+  session: any;
+}
+
+export function OnboardingForm({ session }: OnboardingFormProps) {
   const [loading, setLoading] = useState(false);
+  console.log("loading",loading)
   const [formData, setFormData] = useState({
     universityName: "",
     department: "",
-    customUniversity: "",
+    customUniversity: "", 
     customDepartment: "",
   });
   const [universitySearch, setUniversitySearch] = useState("");
   const [departmentSearch, setDepartmentSearch] = useState("");
-  const { user } = useUser();
   const router = useRouter();
 
   const filteredUniversities = POPULAR_UNIVERSITIES.filter(university =>
@@ -180,29 +183,25 @@ export function OnboardingForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+
+    if (!session?.id || !formData.universityName.trim() || !formData.department.trim()) return;
 
     const finalUniversityName =
       formData.universityName === "Other"
-        ? formData.customUniversity
+        ? universitySearch
         : formData.universityName;
 
     const finalDepartment =
       formData.department === "Other"
-        ? formData.customDepartment
+        ? departmentSearch
         : formData.department;
-
-    if (!finalUniversityName.trim() || !finalDepartment.trim()) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
 
     setLoading(true);
     try {
-      await updateUserProfile(user.id, {
+      await updateUserProfile(session.id, {
         university_name: finalUniversityName.trim(),
         department: finalDepartment.trim(),
-        full_name: user.fullName || null,
+        name: session.name || null,
       });
       toast.success("Profile setup completed!");
       router.push("/dashboard");

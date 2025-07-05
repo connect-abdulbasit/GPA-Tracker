@@ -1,14 +1,19 @@
-import { auth } from "@clerk/nextjs/server"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { BookOpen } from "lucide-react"
 import { AddSemesterDialog } from "@/components/add-semester-dialog"
 import { SemesterCard } from "@/components/semester-card"
 import { fetchSemestersWithCourses } from "@/app/actions/semester"
 // import { UpdateSemesterDialog } from "@/components/update-semester-dialog"
+import { authClient } from "@/lib/auth-client"
+import { redirect } from "next/navigation"
 
 export default async function SemestersPage() {
-  const { userId } = await auth()
-  const semesters = await fetchSemestersWithCourses(userId!)
+  const session = await authClient.getSession()
+  const semesters = await fetchSemestersWithCourses(session?.data?.user?.id || "")
+
+  if (!session?.data?.user) {
+    redirect("/sign-in")
+  }
 
   return (
     <div className="space-y-4 sm:space-y-8">
@@ -37,7 +42,7 @@ export default async function SemestersPage() {
       ) : (
         <div className="grid gap-3 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 px-4 sm:px-0">
           {semesters.map((semester) => (
-            <SemesterCard key={semester.id} semester={semester} userId={userId!} />
+            <SemesterCard key={semester.id} semester={semester} userId={session?.data?.user?.id || ""} />
           ))}
         </div>
       )}

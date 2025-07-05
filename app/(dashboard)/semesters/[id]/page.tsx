@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import {
   Card,
   CardContent,
@@ -24,6 +23,7 @@ import { SemesterActions } from "@/components/semester-actions";
 import { OngoingCourseCard } from "@/components/ongoing-course";
 import { Badge } from "@/components/ui/badge";
 import { gradeScale } from "@/lib/gpa-calculations";
+import { authClient } from "@/lib/auth-client";
 
 interface PageProps {
   params: Promise<{
@@ -34,8 +34,8 @@ interface PageProps {
 
 export default async function SemesterDetailsPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const { userId } = await auth();
-  const semester = await fetchSemesterById(resolvedParams.id, userId!);
+  const session = await authClient.getSession()
+  const semester = await fetchSemesterById(resolvedParams.id, session?.data?.user?.id || "");
   const isOngoing = semester.status === "ongoing";
   if (!semester) {
     notFound();

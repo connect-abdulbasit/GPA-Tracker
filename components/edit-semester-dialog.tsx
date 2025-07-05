@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -11,34 +10,37 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Edit } from "lucide-react"
 import { toast } from "sonner"
 import { updateSemester } from "@/app/actions/semester"
+import { useAuth } from "@/lib/use-auth"
 
 interface EditSemesterDialogProps {
   semesterId: string
-  currentName: string
-  open: boolean
-  onOpenChange: (open: boolean) => void
+  name: string
 }
 
-export function EditSemesterDialog({ semesterId, currentName, open, onOpenChange }: EditSemesterDialogProps) {
-  const [name, setName] = useState(currentName)
+export function EditSemesterDialog({ semesterId, name }: EditSemesterDialogProps) {
+  const { session } = useAuth()
+  const [open, setOpen] = useState(false)
+  const [semesterName, setSemesterName] = useState(name)
   const [loading, setLoading] = useState(false)
-  const { user } = useUser()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user || !name.trim()) return
+    if (!semesterName.trim()) return
 
     setLoading(true)
     try {
-      await updateSemester(semesterId, user.id, name.trim())
+      await updateSemester(semesterId, session?.user?.id!, semesterName.trim())
+
       toast.success("Semester updated successfully!")
-      onOpenChange(false)
+      setOpen(false)
       router.refresh()
     } catch (error) {
       toast.error("Failed to update semester")
@@ -49,7 +51,7 @@ export function EditSemesterDialog({ semesterId, currentName, open, onOpenChange
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -63,8 +65,8 @@ export function EditSemesterDialog({ semesterId, currentName, open, onOpenChange
               </Label>
               <Input
                 id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={semesterName}
+                onChange={(e) => setSemesterName(e.target.value)}
                 placeholder="e.g., Fall 2024"
                 className="col-span-3"
                 required
