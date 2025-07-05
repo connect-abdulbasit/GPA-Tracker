@@ -1,6 +1,6 @@
-import { auth } from "@clerk/nextjs/server"
+import { authClient } from "@/lib/auth-client"
 
 export async function getAuthUser() {
-  const { userId } = await auth()
-  return userId
+  const session = await authClient.getSession()
+  return session?.data?.user?.id
 }

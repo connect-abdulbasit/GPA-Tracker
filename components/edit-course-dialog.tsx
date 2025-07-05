@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -12,56 +11,58 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Edit } from "lucide-react"
 import { toast } from "sonner"
 import { updateCourse } from "@/app/actions/course"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { useSession } from "@/lib/auth-client"
 
 interface EditCourseDialogProps {
-  course: {
-    id: string
-    name: string
-    credit_hours: number
-    gpa: number
-    type: string
-  }
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  disableGpaEdit?: boolean
+  courseId: string
+  semesterId: string
+  name: string
+  creditHours?: number
+  gpa?: number
+  courseType: "core" | "elective" | "non-credit"
+  isOngoing: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  onCourseUpdated?: () => void
 }
 
-export function EditCourseDialog({ course, open, onOpenChange, disableGpaEdit = false }: EditCourseDialogProps) {
-  const [name, setName] = useState(course.name)
-  const [creditHours, setCreditHours] = useState(course.credit_hours.toString())
-  const [gpa, setGpa] = useState(course.gpa.toString())
-  const [type, setType] = useState(course.type)
+export function EditCourseDialog({ courseId, semesterId, name, creditHours, gpa, courseType, isOngoing, open: externalOpen, onOpenChange }: EditCourseDialogProps) {
+  const { data: session } = useSession()
+  const [internalOpen, setInternalOpen] = useState(false)
+  const [courseName, setCourseName] = useState(name || "")
+  const [courseCreditHours, setCourseCreditHours] = useState((creditHours || 0).toString())
+  const [courseGpa, setCourseGpa] = useState((gpa || 0).toString())
+  const [courseTypeState, setCourseTypeState] = useState<"core" | "elective" | "non-credit">(courseType || "core")
   const [loading, setLoading] = useState(false)
-  const { user } = useUser()
   const router = useRouter()
+
+  // Use external state if provided, otherwise use internal state
+  const open = externalOpen !== undefined ? externalOpen : internalOpen
+  const setOpen = onOpenChange || setInternalOpen
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user || !name.trim() || !creditHours || !gpa || !type) return
-    const creditHoursNum = Number.parseInt(creditHours)
-    const gpaNum = Number.parseFloat(gpa)
+    if (!courseName.trim() || !courseCreditHours || (!courseGpa && !isOngoing) || !courseTypeState) return
+    const creditHoursNum = Number.parseInt(courseCreditHours)
+    const gpaNum = Number.parseFloat(courseGpa)
 
-    if (creditHoursNum <= 0 || gpaNum < 0 || gpaNum > 4) {
-      toast.error("Please enter valid values (GPA should be between 0 and 4)")
+    if (creditHoursNum <= 0 || gpaNum < 0 || gpaNum > 4 ) {
+      toast.error("Please enter valid values (GPA should have max 2 decimal places)")
       return
     }
 
     setLoading(true)
     try {
-      await updateCourse(course.id, user.id, name.trim(), creditHoursNum, gpaNum, type)
+      await updateCourse(courseId, session?.user?.id!, courseName.trim(), creditHoursNum, gpaNum, courseTypeState)
+
       toast.success("Course updated successfully!")
-      onOpenChange(false)
+      setOpen(false)
       router.refresh()
     } catch (error) {
       toast.error("Failed to update course")
@@ -72,7 +73,7 @@ export function EditCourseDialog({ course, open, onOpenChange, disableGpaEdit = 
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
@@ -86,8 +87,8 @@ export function EditCourseDialog({ course, open, onOpenChange, disableGpaEdit = 
               </Label>
               <Input
                 id="course-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={courseName}
+                onChange={(e) => setCourseName(e.target.value)}
                 placeholder="e.g., Calculus I"
                 className="col-span-3"
                 required
@@ -97,7 +98,7 @@ export function EditCourseDialog({ course, open, onOpenChange, disableGpaEdit = 
               <Label htmlFor="course-type" className="text-right">
                 Course Type
               </Label>
-              <Select value={type} onValueChange={setType}>
+              <Select value={courseTypeState} onValueChange={(value: "core" | "elective" | "non-credit") => setCourseTypeState(value)}>
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Select course type" />
                 </SelectTrigger>
@@ -117,8 +118,8 @@ export function EditCourseDialog({ course, open, onOpenChange, disableGpaEdit = 
                 type="number"
                 min="1"
                 max="10"
-                value={creditHours}
-                onChange={(e) => setCreditHours(e.target.value)}
+                value={courseCreditHours}
+                onChange={(e) => setCourseCreditHours(e.target.value)}
                 placeholder="3"
                 className="col-span-3"
                 required
@@ -134,19 +135,13 @@ export function EditCourseDialog({ course, open, onOpenChange, disableGpaEdit = 
                 min="0"
                 max="4"
                 step="0.001"
-                value={gpa}
-                onChange={(e) => setGpa(e.target.value)}
+                value={courseGpa}
+                onChange={(e) => setCourseGpa(e.target.value)}
                 placeholder="4"
                 className="col-span-3"
                 required
-                disabled={disableGpaEdit}
               />
             </div>
-            {disableGpaEdit && (
-              <div className="text-xs text-muted-foreground text-center">
-                GPA is automatically calculated from assessments for courses
-              </div>
-            )}
           </div>
           <DialogFooter>
             <Button type="submit" disabled={loading}>

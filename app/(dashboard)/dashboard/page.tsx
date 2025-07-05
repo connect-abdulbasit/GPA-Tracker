@@ -1,16 +1,64 @@
-import { auth } from "@clerk/nextjs/server"
+"use client"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { TrendingUp, BookOpen, GraduationCap, Target } from "lucide-react"
 import { GPATrendChart } from "@/components/gpa-trend-chart"
 import { CourseTypeGPAChart } from "@/components/course-type-gpa-chart"
 import { getCourseData, getDashboardData, getGpaTrendData } from "@/app/actions/dashboard"
 import { UserProfileDisplay } from "@/components/user-profile-display"
+import { useUserData } from "@/hooks/useUserSync"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { HashLoader } from "react-spinners"
 
-export default async function DashboardPage() {
-  const { userId } = await auth()
-  const dashboardData = await getDashboardData(userId!)
-  const gpaTrendData = await getGpaTrendData(userId!)
-  const courseData = await getCourseData(userId!)
+export default function DashboardPage() {
+  const { userData, loading } = useUserData()
+  const router = useRouter()
+  const [dashboardData, setDashboardData] = useState<any>(null)
+  const [gpaTrendData, setGpaTrendData] = useState<any>(null)
+  const [courseData, setCourseData] = useState<any>(null)
+  const [dataLoading, setDataLoading] = useState(true)
+  console.log("userData",userData)
+  useEffect(() => {
+    const fetchData = async () => {
+      if (userData?.id) {
+        try {
+          const [dashboard, gpaTrend, course] = await Promise.all([
+            getDashboardData(userData.id),
+            getGpaTrendData(userData.id),
+            getCourseData(userData.id)
+          ])
+          setDashboardData(dashboard)
+          setGpaTrendData(gpaTrend)
+          setCourseData(course)
+        } catch (error) {
+          console.error('Error fetching dashboard data:', error)
+        } finally {
+          setDataLoading(false)
+        }
+      }
+    }
+
+    if (!loading) {
+      fetchData()
+    }
+  }, [userData, loading])
+
+  useEffect(() => {
+    if (!userData && !loading) {
+      router.push("/sign-in")
+    }
+  }, [userData, loading, router])
+
+  if (loading || dataLoading) {
+    return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
+    <HashLoader color="#4F46E5" />
+  </div>
+  }
+
+  if (!userData) {
+    return null
+  }
+
   return (
     <div className="space-y-4 sm:space-y-8">
       <div className="px-4 sm:px-0">
@@ -25,7 +73,7 @@ export default async function DashboardPage() {
             <GraduationCap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dashboardData.cgpa}</div>
+            <div className="text-2xl font-bold">{dashboardData?.cgpa || "0.00"}</div>
             <p className="text-xs text-muted-foreground">Out of 4.0 scale</p>
           </CardContent>
         </Card>
@@ -36,8 +84,8 @@ export default async function DashboardPage() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dashboardData.totalCourses}</div>
-            <p className="text-xs text-muted-foreground">Across {dashboardData.totalSemesters} semesters</p>
+            <div className="text-2xl font-bold">{dashboardData?.totalCourses || 0}</div>
+            <p className="text-xs text-muted-foreground">Across {dashboardData?.totalSemesters || 0} semesters</p>
           </CardContent>
         </Card>
 
@@ -47,7 +95,7 @@ export default async function DashboardPage() {
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dashboardData.totalCredits}</div>
+            <div className="text-2xl font-bold">{dashboardData?.totalCredits || 0}</div>
             <p className="text-xs text-muted-foreground">Total completed</p>
           </CardContent>
         </Card>
@@ -58,7 +106,9 @@ export default async function DashboardPage() {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{dashboardData.cgpa>"3.5"?"Excellent":dashboardData.cgpa>"3.0"?"Good":dashboardData.cgpa>"2.5"?"Average":"Poor"}</div>
+            <div className="text-2xl font-bold">
+              {dashboardData?.cgpa > "3.5" ? "Excellent" : dashboardData?.cgpa > "3.0" ? "Good" : dashboardData?.cgpa > "2.5" ? "Average" : "Poor"}
+            </div>
             <p className="text-xs text-muted-foreground">Academic standing</p>
           </CardContent>
         </Card>
@@ -71,7 +121,7 @@ export default async function DashboardPage() {
             <CardDescription>Your semester-wise GPA progression</CardDescription>
           </CardHeader>
           <CardContent>
-            <GPATrendChart data={gpaTrendData} />
+            <GPATrendChart data={gpaTrendData || []} />
           </CardContent>
         </Card>
 
@@ -81,7 +131,7 @@ export default async function DashboardPage() {
             <CardDescription>Compare your GPA performance between core and elective courses</CardDescription>
           </CardHeader>
           <CardContent>
-            <CourseTypeGPAChart data={courseData} />
+            <CourseTypeGPAChart data={courseData || []} />
           </CardContent>
         </Card>
       </div>

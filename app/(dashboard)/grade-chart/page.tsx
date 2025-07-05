@@ -1,3 +1,4 @@
+"use client"
 import { gradeScale } from "@/lib/gpa-calculations";
 import {
   Card,
@@ -8,8 +9,31 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { GraduationCap, Info } from "lucide-react";
+import { useUserData } from "@/hooks/useUserSync"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
+import { HashLoader } from "react-spinners";
 
 export default function GradeChartPage() {
+  const { userData, loading } = useUserData()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!userData && !loading) {
+      router.push("/sign-in")
+    }
+  }, [userData, loading, router])
+
+  if (loading) {
+    return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
+      <HashLoader color="#4F46E5" />
+    </div>  
+  }
+
+  if (!userData) {
+    return null
+  }
+
   return (
     <div className="space-y-4 sm:space-y-8">
       <div className="px-4 sm:px-0">

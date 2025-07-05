@@ -9,25 +9,26 @@ import { useUserData } from "@/hooks/useUserSync"
 type UserProfile = {
   university_name: string
   department: string
-  full_name: string
+  name: string
   created_at: string
 }
 
 export function UserProfileDisplay() {
-  const userData = useUserData()
-  const [profile, setProfile] = useState< UserProfile | null>(null)
-  const [loading, setLoading] = useState(true)
+  const { userData, loading } = useUserData()
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+
   useEffect(() => {
-    if (userData) {
+    if (userData && !loading) {
       setProfile({
-        university_name: userData.university_name||"",
-        department: userData.department||"",
-        full_name: userData.full_name,
-        created_at: userData.created_at,
+        university_name: userData.university_name || "",
+        department: userData.department || "",
+        name: userData.name || "",
+        created_at: userData.created_at || new Date().toISOString(),
       })
-      setLoading(false)
+    } else if (!loading && !userData) {
+      setProfile(null)
     }
-  }, [userData])
+  }, [userData, loading])
 
   if (loading) {
     return (
@@ -43,7 +44,15 @@ export function UserProfileDisplay() {
   }
 
   if (!profile) {
-    return null
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center text-muted-foreground">
+            No profile data available
+          </div>
+        </CardContent>
+      </Card>
+    )
   }
 
   return (
@@ -78,14 +87,14 @@ export function UserProfileDisplay() {
           </div>
         </div>
 
-        {profile.full_name && (
+        {profile.name && (
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
               <User className="h-4 w-4 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Full Name</p>
-              <p className="font-medium">{profile.full_name}</p>
+              <p className="font-medium">{profile.name}</p>
             </div>
           </div>
         )}

@@ -3,8 +3,6 @@
 import type React from "react";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,27 +25,34 @@ import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { addSemester } from "@/app/actions/semester";
+import { useSession } from "@/lib/auth-client";
 
-export function AddSemesterDialog() {
+interface AddSemesterDialogProps {
+  onSemesterAdded?: () => void;
+}
+
+export function AddSemesterDialog({ onSemesterAdded }: AddSemesterDialogProps) {
+  const { data: session } = useSession();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [status, setStatus] = useState<"ongoing" | "completed">("completed");
   const [loading, setLoading] = useState(false);
-  const { user } = useUser();
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user || !name.trim()) return;
+    if (!session?.user || !name.trim()) return;
 
     setLoading(true);
     try {
-      await addSemester(user.id, name, status);
+      await addSemester(session.user.id, name.trim(), status);
       toast.success("Semester added successfully!");
       setName("");
       setStatus("completed");
       setOpen(false);
-      router.refresh();
+      
+      if (onSemesterAdded) {
+        onSemesterAdded();
+      }
     } catch (error) {
       if (error instanceof Error) {
         if (

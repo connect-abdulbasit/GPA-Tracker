@@ -36,9 +36,10 @@ interface SemesterCardProps {
     }[]
   }
   userId: string
+  onDataChange?: () => void
 }
 
-export function SemesterCard({ semester,userId }: SemesterCardProps) {
+export function SemesterCard({ semester, userId, onDataChange }: SemesterCardProps) {
   const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
   const router = useRouter()
@@ -56,9 +57,11 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
     setLoading(true)
     try {
       await deleteSemester(semester.id, userId)
-
       toast.success("Semester deleted successfully!")
-      router.refresh()
+      
+      if (onDataChange) {
+        onDataChange();
+      }
     } catch (error) {
       toast.error("Failed to delete semester")
       console.error(error)
@@ -76,7 +79,10 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
       await marksAsCompleted(semester.id, userId)
 
       toast.success("Semester marked as completed!")
-      router.refresh()
+      
+      if (onDataChange) {
+        onDataChange();
+      }
     } catch (error) {
       if(error instanceof Error ){
         if(error.message === "Semester not found"){
@@ -195,7 +201,11 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
         </div>
 
          <div className="flex flex-col sm:flex-row gap-2">
-          <AddCourseDialog semesterId={semester.id} isOngoing={isOngoing} />
+          <AddCourseDialog 
+            semesterId={semester.id} 
+            isOngoing={isOngoing} 
+            onCourseAdded={onDataChange}
+          />
           <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
               <Link href={`/semesters/${semester.id}`} className="flex items-center justify-center">
               <BookOpen className="h-4 w-4 mr-2" />
@@ -207,9 +217,13 @@ export function SemesterCard({ semester,userId }: SemesterCardProps) {
     </Card>
       <EditSemesterDialog
         semesterId={semester.id}
-        currentName={semester.name}
+        name={semester.name}
+        gpa={semester.gpa}
+        totalCredits={semester.total_credits}
+        active={true}
         open={open}
         onOpenChange={setOpen}
+        onSemesterUpdated={onDataChange}
       />
     </>
   )

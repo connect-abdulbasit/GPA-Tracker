@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
+import { useSession } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -31,8 +31,10 @@ export function AddResourceButton() {
   const [resourceType, setResourceType] = useState<string>("link")
   const [url, setUrl] = useState("")
   const [tags, setTags] = useState("")
-  const { user } = useUser()
+  const { data: session } = useSession()
   const router = useRouter()
+
+  const user = session?.user
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

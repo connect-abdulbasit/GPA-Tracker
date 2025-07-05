@@ -1,5 +1,3 @@
-import { auth } from "@clerk/nextjs/server"
-import { supabase } from "@/lib/supabase"
 import { notFound } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

@@ -3,7 +3,6 @@
 import type React from "react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useUser } from "@clerk/nextjs"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -16,9 +15,10 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Pencil } from "lucide-react"
+import { Edit } from "lucide-react"
 import { toast } from "sonner"
 import { updateSemester } from "@/app/actions/semester"
+import { useSession } from "@/lib/auth-client"
 import {
   Select,
   SelectContent,
@@ -28,20 +28,27 @@ import {
 } from "@/components/ui/select"
 import { fetchSemestersWithCourses } from "@/app/actions/semester"
 
-export function UpdateSemesterDialog() {
+interface UpdateSemesterDialogProps {
+  semesterId: string
+  name: string
+  gpa: number
+  totalCredits: number
+  active: boolean
+}
+
+export function UpdateSemesterDialog({ semesterId, name, gpa, totalCredits, active }: UpdateSemesterDialogProps) {
+  const { data: session } = useSession()
   const [open, setOpen] = useState(false)
-  const [name, setName] = useState("")
-  const [selectedSemester, setSelectedSemester] = useState("")
+  const [semesterName, setSemesterName] = useState(name)
   const [loading, setLoading] = useState(false)
   const [semesters, setSemesters] = useState<{ id: string; name: string }[]>([])
-  const { user } = useUser()
   const router = useRouter()
 
   const handleOpenChange = async (newOpen: boolean) => {
     setOpen(newOpen)
-    if (newOpen && user) {
+    if (newOpen && session?.user) {
       try {
-        const fetchedSemesters = await fetchSemestersWithCourses(user.id)
+        const fetchedSemesters = await fetchSemestersWithCourses(session.user.id)
         setSemesters(fetchedSemesters.map(s => ({ id: s.id, name: s.name })))
       } catch (error) {
         console.error("Failed to fetch semesters:", error)
@@ -52,14 +59,13 @@ export function UpdateSemesterDialog() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!user || !name.trim() || !selectedSemester) return
+    if (!semesterName.trim()) return
 
     setLoading(true)
     try {
-      await updateSemester(selectedSemester, user.id, name.trim())
+      await updateSemester(semesterId, session?.user?.id!, semesterName.trim())
+
       toast.success("Semester updated successfully!")
-      setName("")
-      setSelectedSemester("")
       setOpen(false)
       router.refresh()
     } catch (error) {
@@ -74,7 +80,7 @@ export function UpdateSemesterDialog() {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline">
-          <Pencil className="h-4 w-4 mr-2" />
+          <Edit className="h-4 w-4 mr-2" />
           Update Semester
         </Button>
       </DialogTrigger>
@@ -89,7 +95,7 @@ export function UpdateSemesterDialog() {
               <Label htmlFor="semester" className="text-right">
                 Semester
               </Label>
-              <Select value={selectedSemester} onValueChange={setSelectedSemester}>
+              <Select value={semesterId} onValueChange={(value) => setSemesterName(value)}>
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Select a semester" />
                 </SelectTrigger>
@@ -108,8 +114,8 @@ export function UpdateSemesterDialog() {
               </Label>
               <Input
                 id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={semesterName}
+                onChange={(e) => setSemesterName(e.target.value)}
                 placeholder="e.g., Fall 2024"
                 className="col-span-3"
                 required
@@ -117,7 +123,7 @@ export function UpdateSemesterDialog() {
             </div>
           </div>
           <DialogFooter>
-            <Button type="submit" disabled={loading || !selectedSemester}>
+            <Button type="submit" disabled={loading || !semesterId}>
               {loading ? "Updating..." : "Update Semester"}
             </Button>
           </DialogFooter>

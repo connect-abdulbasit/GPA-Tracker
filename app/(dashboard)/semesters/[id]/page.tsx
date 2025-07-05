@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+"use client"
 import {
   Card,
   CardContent,
@@ -24,6 +24,10 @@ import { SemesterActions } from "@/components/semester-actions";
 import { OngoingCourseCard } from "@/components/ongoing-course";
 import { Badge } from "@/components/ui/badge";
 import { gradeScale } from "@/lib/gpa-calculations";
+import { useUserData } from "@/hooks/useUserSync"
+import { useRouter } from "next/navigation"
+import { useEffect, useState, useCallback } from "react"
+import { HashLoader } from "react-spinners"
 
 interface PageProps {
   params: Promise<{
@@ -32,15 +36,62 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function SemesterDetailsPage({ params }: PageProps) {
-  const resolvedParams = await params;
-  const { userId } = await auth();
-  const semester = await fetchSemesterById(resolvedParams.id, userId!);
-  const isOngoing = semester.status === "ongoing";
-  if (!semester) {
-    notFound();
+export default function SemesterDetailsPage({ params }: PageProps) {
+  const { userData, loading } = useUserData()
+  const router = useRouter()
+  const [semester, setSemester] = useState<any>(null)
+  const [dataLoading, setDataLoading] = useState(true)
+  const [semesterId, setSemesterId] = useState<string>("")
+
+  const fetchSemesterData = useCallback(async () => {
+    if (userData?.id && semesterId) {
+      try {
+        setDataLoading(true)
+        const semesterData = await fetchSemesterById(semesterId, userData.id)
+        if (!semesterData) {
+          notFound()
+        }
+        setSemester(semesterData)
+      } catch (error) {
+        console.error('Error fetching semester:', error)
+      } finally {
+        setDataLoading(false)
+      }
+    }
+  }, [userData?.id, semesterId])
+
+  useEffect(() => {
+    const resolveParams = async () => {
+      const resolvedParams = await params
+      setSemesterId(resolvedParams.id)
+    }
+    resolveParams()
+  }, [params])
+
+  useEffect(() => {
+    if (!loading && userData?.id && semesterId) {
+      fetchSemesterData()
+    }
+  }, [fetchSemesterData, loading, userData?.id, semesterId])
+
+  useEffect(() => {
+    if (!userData && !loading) {
+      router.push("/sign-in")
+    }
+  }, [userData, loading, router])
+
+  if (loading || dataLoading) {
+    return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
+      <HashLoader color="#4F46E5" />
+    </div>
   }
-  
+
+  if (!userData || !semester) {
+    return null
+  }
+
+  const isOngoing = semester.status === "ongoing";
+
   const calculateOngoingSGPA = () => {
     if (!isOngoing) return null;
     
@@ -205,7 +256,11 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 sm:px-0">
         <h2 className="text-xl sm:text-2xl font-bold">Courses</h2>
         <div className="w-full sm:w-auto">
-          <AddCourseDialog semesterId={semester.id} isOngoing={isOngoing} />
+          <AddCourseDialog 
+            semesterId={semester.id} 
+            isOngoing={isOngoing} 
+            onCourseAdded={fetchSemesterData}
+          />
         </div>
       </div>
 
@@ -221,7 +276,11 @@ export default async function SemesterDetailsPage({ params }: PageProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <AddCourseDialog semesterId={semester.id} isOngoing={isOngoing} />
+            <AddCourseDialog 
+              semesterId={semester.id} 
+              isOngoing={isOngoing} 
+              onCourseAdded={fetchSemesterData}
+            />
           </CardContent>
         </Card>
       ) : (

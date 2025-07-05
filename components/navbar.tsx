@@ -1,15 +1,22 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { UserButton } from "@clerk/nextjs"
-import { Moon, Sun, GraduationCap, Menu, X } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { Moon, Sun, GraduationCap, Menu, X, LogOut, User } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useUserData } from "@/hooks/useUserSync"
+import { signOut, useSession } from "@/lib/auth-client"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", disabled: false, badge: undefined },
@@ -23,8 +30,10 @@ export function Navbar() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const userData = useUserData()
-  const isAdmin = userData?.role === "admin"
+  const { userData } = useUserData()
+  const { data: session } = useSession()
+  const isAdmin = userData?.userData?.role === "admin"
+  const router = useRouter()
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -36,6 +45,10 @@ export function Navbar() {
       document.body.style.overflow = 'unset'
     }
   }, [isMobileMenuOpen])
+
+  const handleSignOut = async () => {
+    await signOut()
+  }
 
   return (
     <>
@@ -74,7 +87,28 @@ export function Navbar() {
                 <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
                 <span className="sr-only">Toggle theme</span>
               </Button>
-              <UserButton afterSignOutUrl="/" />
+              
+              {session?.user && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage src={session.user.image || undefined} alt={session.user.name || "User"} />
+                        <AvatarFallback>
+                          <User className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Sign out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              
               <Button
                 variant="ghost"
                 size="icon"
