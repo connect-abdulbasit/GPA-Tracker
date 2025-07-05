@@ -20,9 +20,10 @@ interface CourseCardProps {
     semester_id: string
     type: string
   }
+  onDataChange?: () => void
 }
 
-export function CourseCard({ course }: CourseCardProps) {
+export function CourseCard({ course, onDataChange }: CourseCardProps) {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const router = useRouter()
@@ -36,7 +37,10 @@ export function CourseCard({ course }: CourseCardProps) {
     try {
       await deleteCourse(course.id)
       toast.success("Course deleted successfully!")
-      router.refresh()
+      
+      if (onDataChange) {
+        onDataChange()
+      }
     } catch (error) {
       toast.error("Failed to delete course")
       console.error(error)
@@ -86,7 +90,18 @@ export function CourseCard({ course }: CourseCardProps) {
           </div>
         </CardContent>
       </Card>
-      <EditCourseDialog course={course} open={open} onOpenChange={setOpen} />
+      <EditCourseDialog 
+        courseId={course.id}
+        semesterId={course.semester_id}
+        name={course.name}
+        creditHours={course.credit_hours}
+        gpa={course.gpa}
+        courseType={course.type as "core" | "elective" | "non-credit"}
+        isOngoing={false}
+        open={open} 
+        onOpenChange={setOpen}
+        onCourseUpdated={onDataChange}
+      />
     </>
   )
 }

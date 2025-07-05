@@ -14,9 +14,12 @@ import { EditSemesterDialog } from "@/components/edit-semester-dialog"
 interface SemesterActionsProps {
   semesterId: string
   semesterName: string
+  gpa?: number
+  totalCredits?: number
+  onDataChange?: () => void
 }
 
-export function SemesterActions({ semesterId, semesterName }: SemesterActionsProps) {
+export function SemesterActions({ semesterId, semesterName, gpa = 0, totalCredits = 0, onDataChange }: SemesterActionsProps) {
   const [editDialogOpen, setEditDialogOpen] = useState(false)
 
   return (
@@ -38,8 +41,12 @@ export function SemesterActions({ semesterId, semesterName }: SemesterActionsPro
       <EditSemesterDialog
         semesterId={semesterId}
         name={semesterName}
+        gpa={gpa}
+        totalCredits={totalCredits}
+        active={true}
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
+        onSemesterUpdated={onDataChange}
       />
     </>
   )

@@ -29,6 +29,7 @@ interface EditCourseDialogProps {
   isOngoing: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  onCourseUpdated?: () => void
 }
 
 export function EditCourseDialog({ courseId, semesterId, name, creditHours, gpa, courseType, isOngoing, open: externalOpen, onOpenChange }: EditCourseDialogProps) {
