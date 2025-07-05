@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { useUserData } from "@/hooks/useUserSync";
 import { HashLoader } from "react-spinners";
 
-export const dynamic = "force-dynamic"; // forces runtime rendering
 
 export default function OnboardingPage() {
   const { userData, loading } = useUserData();
@@ -56,7 +55,8 @@ export default function OnboardingPage() {
   }
 
   if (!userData) {
-    return <div>Please sign in to continue</div>;
+    router.push("/sign-in");
+    return null;
   }
 
   return <OnboardingForm session={userData} />;

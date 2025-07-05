@@ -1,18 +1,11 @@
 import Link from "next/link"
-import { redirect } from "next/navigation"
 import { GraduationCap, TrendingUp, BarChart3, Calculator, Users, Shield, Zap, ArrowRight, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { authClient } from "@/lib/auth-client"
 
-export default async function HomePage() {
-  const session = await authClient.getSession()
-
-  if (session?.data?.user) {
-    redirect("/dashboard")
-  }
+export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
