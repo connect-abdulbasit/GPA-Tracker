@@ -15,13 +15,15 @@ export default function SignUpPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isEmailLoading, setIsEmailLoading] = useState(false)
+  const [isGitHubLoading, setIsGitHubLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setIsEmailLoading(true)
     setError("")
 
     try {
@@ -34,29 +36,29 @@ export default function SignUpPage() {
     } catch (err) {
       setError("An error occurred during sign up")
     } finally {
-      setIsLoading(false)
+      setIsEmailLoading(false)
     }
   }
 
   const handleGitHubSignUp = async () => {
-    setIsLoading(true)
+    setIsGitHubLoading(true)
     setError("")
     await authClient.signIn.social({
       provider: "github",
-      callbackURL: "/onboarding",
+      callbackURL: "/dashboard",
       errorCallbackURL: "/error",
-      newUserCallbackURL: "/onboarding",
+      newUserCallbackURL: "/dashboard",
     })
   }
 
   const handleGoogleSignUp = async () => {
-    setIsLoading(true)
+    setIsGoogleLoading(true)
     setError("")
     await authClient.signIn.social({
       provider: "google",
-      callbackURL: "/onboarding",
+      callbackURL: "/dashboard",
       errorCallbackURL: "/error",
-      newUserCallbackURL: "/onboarding",
+      newUserCallbackURL: "/dashboard",
     })
   }
 
@@ -182,6 +184,7 @@ export default function SignUpPage() {
                         onChange={(e) => setName(e.target.value)}
                         className="pl-10"
                         required
+                        disabled={isEmailLoading || isGitHubLoading || isGoogleLoading}
                       />
                     </div>
                   </div>
@@ -197,6 +200,7 @@ export default function SignUpPage() {
                         onChange={(e) => setEmail(e.target.value)}
                         className="pl-10"
                         required
+                        disabled={isEmailLoading || isGitHubLoading || isGoogleLoading}
                       />
                     </div>
                   </div>
@@ -212,6 +216,7 @@ export default function SignUpPage() {
                         onChange={(e) => setPassword(e.target.value)}
                         className="pl-10"
                         required
+                        disabled={isEmailLoading || isGitHubLoading || isGoogleLoading}
                       />
                     </div>
                   </div>
@@ -220,8 +225,8 @@ export default function SignUpPage() {
                       {error}
                     </div>
                   )}
-                  <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? "Creating account..." : "Create Account"}
+                  <Button type="submit" className="w-full" disabled={isEmailLoading || isGitHubLoading || isGoogleLoading}>
+                    {isEmailLoading ? "Creating account..." : "Create Account"}
                   </Button>
                 </form>
 
@@ -237,19 +242,19 @@ export default function SignUpPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <Button
                     variant="outline"
-                    onClick={() => handleGitHubSignUp()}
-                    disabled={isLoading}
+                    onClick={handleGitHubSignUp}
+                    disabled={isEmailLoading || isGitHubLoading || isGoogleLoading}
                   >
                     <Github className="mr-2 h-4 w-4" />
-                    GitHub
+                    {isGitHubLoading ? "Connecting..." : "GitHub"}
                   </Button>
                   <Button
                     variant="outline"
-                    onClick={() => handleGoogleSignUp()}
-                    disabled={isLoading}
+                    onClick={handleGoogleSignUp}
+                    disabled={isEmailLoading || isGitHubLoading || isGoogleLoading}
                   >
                     <Chrome className="mr-2 h-4 w-4" />
-                    Google
+                    {isGoogleLoading ? "Connecting..." : "Google"}
                   </Button>
                 </div>
               </CardContent>

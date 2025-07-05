@@ -37,7 +37,7 @@ export function SemesterActions({ semesterId, semesterName }: SemesterActionsPro
 
       <EditSemesterDialog
         semesterId={semesterId}
-        currentName={semesterName}
+        name={semesterName}
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
       />

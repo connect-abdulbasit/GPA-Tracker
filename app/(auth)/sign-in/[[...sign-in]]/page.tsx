@@ -14,13 +14,15 @@ import { useRouter } from "next/navigation"
 export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [isEmailLoading, setIsEmailLoading] = useState(false)
+  const [isGitHubLoading, setIsGitHubLoading] = useState(false)
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setIsEmailLoading(true)
     setError("")
 
     try {
@@ -33,12 +35,12 @@ export default function SignInPage() {
     } catch (err) {
       setError("An error occurred during sign in")
     } finally {
-      setIsLoading(false)
+      setIsEmailLoading(false)
     }
   }
 
   const handleGitHubSignIn = async () => {
-    setIsLoading(true)
+    setIsGitHubLoading(true)
     setError("")
     await authClient.signIn.social({
       provider: "github",
@@ -49,7 +51,7 @@ export default function SignInPage() {
   }
 
   const handleGoogleSignIn = async () => {
-    setIsLoading(true)
+    setIsGoogleLoading(true)
     setError("")
     await authClient.signIn.social({
       provider: "google",
@@ -118,6 +120,7 @@ export default function SignInPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10"
                       required
+                      disabled={isEmailLoading || isGitHubLoading}
                     />
                   </div>
                 </div>
@@ -133,6 +136,7 @@ export default function SignInPage() {
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10"
                       required
+                      disabled={isEmailLoading || isGitHubLoading}
                     />
                   </div>
                 </div>
@@ -141,8 +145,8 @@ export default function SignInPage() {
                     {error}
                   </div>
                 )}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? "Signing in..." : "Sign In"}
+                <Button type="submit" className="w-full" disabled={isEmailLoading}>
+                  {isEmailLoading ? "Signing in..." : "Sign In"}
                 </Button>
               </form>
 
@@ -159,18 +163,18 @@ export default function SignInPage() {
                 <Button
                   variant="outline"
                   onClick={handleGitHubSignIn}
-                  disabled={isLoading}
+                  disabled={isEmailLoading || isGitHubLoading}
                 >
                   <Github className="mr-2 h-4 w-4" />
-                  GitHub
+                  {isGitHubLoading ? "Connecting..." : "GitHub"}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={handleGoogleSignIn}
-                  disabled={isLoading}
+                  disabled={isEmailLoading || isGoogleLoading}
                 >
                   <Chrome className="mr-2 h-4 w-4" />
-                  Google
+                  {isGoogleLoading ? "Connecting..." : "Google"}
                 </Button>
               </div>
             </CardContent>

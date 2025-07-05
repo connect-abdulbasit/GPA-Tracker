@@ -10,7 +10,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
@@ -18,27 +17,33 @@ import { Label } from "@/components/ui/label"
 import { Edit } from "lucide-react"
 import { toast } from "sonner"
 import { updateCourse } from "@/app/actions/course"
-import { useAuth } from "@/lib/use-auth"
+import { useSession } from "@/lib/auth-client"
 
 interface EditCourseDialogProps {
   courseId: string
   semesterId: string
   name: string
-  creditHours: number
-  gpa: number
+  creditHours?: number
+  gpa?: number
   courseType: "core" | "elective" | "non-credit"
   isOngoing: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
 }
 
-export function EditCourseDialog({ courseId, semesterId, name, creditHours, gpa, courseType, isOngoing }: EditCourseDialogProps) {
-  const { session } = useAuth()
-  const [open, setOpen] = useState(false)
-  const [courseName, setCourseName] = useState(name)
-  const [courseCreditHours, setCourseCreditHours] = useState(creditHours.toString())
-  const [courseGpa, setCourseGpa] = useState(gpa.toString())
-  const [courseTypeState, setCourseTypeState] = useState<"core" | "elective" | "non-credit">(courseType)
+export function EditCourseDialog({ courseId, semesterId, name, creditHours, gpa, courseType, isOngoing, open: externalOpen, onOpenChange }: EditCourseDialogProps) {
+  const { data: session } = useSession()
+  const [internalOpen, setInternalOpen] = useState(false)
+  const [courseName, setCourseName] = useState(name || "")
+  const [courseCreditHours, setCourseCreditHours] = useState((creditHours || 0).toString())
+  const [courseGpa, setCourseGpa] = useState((gpa || 0).toString())
+  const [courseTypeState, setCourseTypeState] = useState<"core" | "elective" | "non-credit">(courseType || "core")
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+
+  // Use external state if provided, otherwise use internal state
+  const open = externalOpen !== undefined ? externalOpen : internalOpen
+  const setOpen = onOpenChange || setInternalOpen
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

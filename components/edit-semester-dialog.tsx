@@ -17,19 +17,29 @@ import { Label } from "@/components/ui/label"
 import { Edit } from "lucide-react"
 import { toast } from "sonner"
 import { updateSemester } from "@/app/actions/semester"
-import { useAuth } from "@/lib/use-auth"
+import { useSession } from "@/lib/auth-client"
 
 interface EditSemesterDialogProps {
   semesterId: string
   name: string
+  gpa: number
+  totalCredits: number
+  active: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  onSemesterUpdated?: () => void
 }
 
-export function EditSemesterDialog({ semesterId, name }: EditSemesterDialogProps) {
-  const { session } = useAuth()
-  const [open, setOpen] = useState(false)
+export function EditSemesterDialog({ semesterId, name, gpa, totalCredits, active, open: externalOpen, onOpenChange, onSemesterUpdated }: EditSemesterDialogProps) {
+  const { data: session } = useSession()
+  const [internalOpen, setInternalOpen] = useState(false)
   const [semesterName, setSemesterName] = useState(name)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+
+  // Use external state if provided, otherwise use internal state
+  const open = externalOpen !== undefined ? externalOpen : internalOpen
+  const setOpen = onOpenChange || setInternalOpen
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -41,7 +51,10 @@ export function EditSemesterDialog({ semesterId, name }: EditSemesterDialogProps
 
       toast.success("Semester updated successfully!")
       setOpen(false)
-      router.refresh()
+      
+      if (onSemesterUpdated) {
+        onSemesterUpdated()
+      }
     } catch (error) {
       toast.error("Failed to update semester")
       console.error(error)

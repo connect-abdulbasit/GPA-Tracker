@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { Moon, Sun, GraduationCap, Menu, X, LogOut, User } from "lucide-react"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils"
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useUserData } from "@/hooks/useUserSync"
-import { useSession, signOut } from "@/lib/auth-client"
+import { signOut, useSession } from "@/lib/auth-client"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,8 +30,10 @@ export function Navbar() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const { userData, loading } = useUserData()
+  const { userData } = useUserData()
+  const { data: session } = useSession()
   const isAdmin = userData?.userData?.role === "admin"
+  const router = useRouter()
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -86,12 +88,12 @@ export function Navbar() {
                 <span className="sr-only">Toggle theme</span>
               </Button>
               
-              {userData?.userData && (
+              {session?.user && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-8 w-8">
-                        <AvatarImage src={userData.userData.image || undefined} alt={userData.userData.name || "User"} />
+                        <AvatarImage src={session.user.image || undefined} alt={session.user.name || "User"} />
                         <AvatarFallback>
                           <User className="h-4 w-4" />
                         </AvatarFallback>

@@ -18,7 +18,7 @@ import { Label } from "@/components/ui/label"
 import { Edit } from "lucide-react"
 import { toast } from "sonner"
 import { updateSemester } from "@/app/actions/semester"
-import { useAuth } from "@/lib/use-auth"
+import { useSession } from "@/lib/auth-client"
 import {
   Select,
   SelectContent,
@@ -31,10 +31,13 @@ import { fetchSemestersWithCourses } from "@/app/actions/semester"
 interface UpdateSemesterDialogProps {
   semesterId: string
   name: string
+  gpa: number
+  totalCredits: number
+  active: boolean
 }
 
-export function UpdateSemesterDialog({ semesterId, name }: UpdateSemesterDialogProps) {
-  const { session } = useAuth()
+export function UpdateSemesterDialog({ semesterId, name, gpa, totalCredits, active }: UpdateSemesterDialogProps) {
+  const { data: session } = useSession()
   const [open, setOpen] = useState(false)
   const [semesterName, setSemesterName] = useState(name)
   const [loading, setLoading] = useState(false)

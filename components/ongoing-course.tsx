@@ -230,10 +230,15 @@ export function OngoingCourseCard({ course, isOngoing }: OngoingCourseCardProps)
         />
       )}
       <EditCourseDialog 
-        course={course} 
-        open={editDialogOpen} 
+        courseId={course.id}
+        semesterId={course.semester_id}
+        name={course.name}
+        creditHours={course.credit_hours}
+        gpa={course.gpa}
+        courseType={course.course_type}
+        isOngoing={isOngoing}
+        open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
-        disableGpaEdit={true}
       />
     </Card>
   )

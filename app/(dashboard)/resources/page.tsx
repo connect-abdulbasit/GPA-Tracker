@@ -1,16 +1,52 @@
+"use client"
 import { AddResourceButton } from "@/components/add-resource-button"
 import { ResourcesList } from "@/components/resources-list"
 // import { AdminRouteGuard } from "@/components/admin-route-guard"
 import { fetchResources } from "@/app/actions/resources"
-import { authClient } from "@/lib/auth-client"
-import { redirect } from "next/navigation"
+import { useUserData } from "@/hooks/useUserSync"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { HashLoader } from "react-spinners"
 
-export default async function ResourcesPage() {
-  const session = await authClient.getSession()
-  const { resources, totalCount, totalPages } = await fetchResources(session?.data?.user?.id || "", 1, 9, "", "all")
+export default function ResourcesPage() {
+  const { userData, loading } = useUserData()
+  const router = useRouter()
+  const [resourcesData, setResourcesData] = useState<any>(null)
+  const [dataLoading, setDataLoading] = useState(true)
 
-  if (!session?.data?.user) {
-    redirect("/sign-in")
+  useEffect(() => {
+    const fetchData = async () => {
+      if (userData?.id) {
+        try {
+          const { resources, totalCount, totalPages } = await fetchResources(userData.id, 1, 9, "", "all")
+          setResourcesData({ resources, totalCount, totalPages })
+        } catch (error) {
+          console.error('Error fetching resources:', error)
+        } finally {
+          setDataLoading(false)
+        }
+      }
+    }
+
+    if (!loading) {
+      fetchData()
+    }
+  }, [userData, loading])
+
+  useEffect(() => {
+    if (!userData && !loading) {
+      router.push("/sign-in")
+    }
+  }, [userData, loading, router])
+
+  if (loading || dataLoading) {
+    return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
+      <HashLoader color="#4F46E5" />
+    </div>
+  }
+
+  if (!userData) {
+    return null
   }
 
   return (
@@ -25,9 +61,9 @@ export default async function ResourcesPage() {
         </div>
 
         <ResourcesList 
-          initialResources={resources} 
-          initialTotalCount={totalCount}
-          initialTotalPages={totalPages}
+          initialResources={resourcesData?.resources || []} 
+          initialTotalCount={resourcesData?.totalCount || 0}
+          initialTotalPages={resourcesData?.totalPages || 0}
         />
       </div>
     // </AdminRouteGuard>

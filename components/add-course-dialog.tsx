@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -20,23 +19,22 @@ import { Label } from "@/components/ui/label"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import { addCourse } from "@/app/actions/course"
-import { useAuth } from "@/lib/use-auth"
-
+import { useSession } from "@/lib/auth-client"
 
 interface AddCourseDialogProps {
   semesterId: string
   isOngoing: boolean
+  onCourseAdded?: () => void
 }
 
-export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps) {
-  const { session } = useAuth()
+export function AddCourseDialog({ semesterId, isOngoing, onCourseAdded }: AddCourseDialogProps) {
+  const { data: session } = useSession()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState("")
   const [creditHours, setCreditHours] = useState("")
   const [gpa, setGpa] = useState("")
   const [courseType, setCourseType] = useState<"core" | "elective" | "non-credit">("core")
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -59,7 +57,11 @@ export function AddCourseDialog({ semesterId, isOngoing }: AddCourseDialogProps)
       setGpa("")
       setCourseType("core")
       setOpen(false)
-      router.refresh()
+      
+      // Call the callback to refetch data instead of router.refresh()
+      if (onCourseAdded) {
+        onCourseAdded();
+      }
     } catch (error) {
       toast.error("Failed to add course")
       console.error(error)
