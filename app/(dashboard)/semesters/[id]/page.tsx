@@ -25,7 +25,7 @@ import { OngoingCourseCard } from "@/components/ongoing-course";
 import { Badge } from "@/components/ui/badge";
 import { gradeScale } from "@/lib/gpa-calculations";
 import { useUserData } from "@/hooks/useUserSync"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 import { useEffect, useState, useCallback } from "react"
 import { HashLoader } from "react-spinners"
 
@@ -38,7 +38,7 @@ interface PageProps {
 
 export default function SemesterDetailsPage({ params }: PageProps) {
   const { userData, loading } = useUserData()
-  const router = useRouter()
+  // const router = useRouter()
   const [semester, setSemester] = useState<any>(null)
   const [dataLoading, setDataLoading] = useState(true)
   const [semesterId, setSemesterId] = useState<string>("")
@@ -74,21 +74,21 @@ export default function SemesterDetailsPage({ params }: PageProps) {
     }
   }, [fetchSemesterData, loading, userData?.id, semesterId])
 
-  useEffect(() => {
-    if (!userData && !loading) {
-      router.push("/sign-in")
-    }
-  }, [userData, loading, router])
+  // useEffect(() => {
+  //   if (!userData && !loading) {
+  //     router.push("/sign-in")
+  //   }
+  // }, [userData, loading, router])
 
   if (loading || dataLoading) {
     return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
       <HashLoader color="#4F46E5" />
-    </div>
+    </div>  
   }
 
-  if (!userData || !semester) {
-    return null
-  }
+  // if (!userData || !semester) {
+  //   return null
+  // }
 
   const isOngoing = semester.status === "ongoing";
 

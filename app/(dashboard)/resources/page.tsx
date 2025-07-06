@@ -4,13 +4,13 @@ import { ResourcesList } from "@/components/resources-list"
 // import { AdminRouteGuard } from "@/components/admin-route-guard"
 import { fetchResources } from "@/app/actions/resources"
 import { useUserData } from "@/hooks/useUserSync"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { HashLoader } from "react-spinners"
 
 export default function ResourcesPage() {
   const { userData, loading } = useUserData()
-  const router = useRouter()
+  // const router = useRouter()
   const [resourcesData, setResourcesData] = useState<any>(null)
   const [dataLoading, setDataLoading] = useState(true)
 
@@ -33,11 +33,11 @@ export default function ResourcesPage() {
     }
   }, [userData, loading])
 
-  useEffect(() => {
-    if (!userData && !loading) {
-      router.push("/sign-in")
-    }
-  }, [userData, loading, router])
+  // useEffect(() => {
+  //   if (!userData && !loading) {
+  //     router.push("/sign-in")
+  //   }
+  // }, [userData, loading, router])
 
   if (loading || dataLoading) {
     return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
@@ -45,9 +45,9 @@ export default function ResourcesPage() {
     </div>
   }
 
-  if (!userData) {
-    return null
-  }
+  // if (!userData) {
+  //   return null
+  // }
 
   return (
     // <AdminRouteGuard>

@@ -5,13 +5,13 @@ import { AddSemesterDialog } from "@/components/add-semester-dialog"
 import { SemesterCard } from "@/components/semester-card"
 import { fetchSemestersWithCourses } from "@/app/actions/semester"
 import { useUserData } from "@/hooks/useUserSync"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 import { useEffect, useState, useCallback } from "react"
 import { HashLoader } from "react-spinners"
 
 export default function SemestersPage() {
   const { userData, loading } = useUserData()
-  const router = useRouter()
+  // const router = useRouter()
   const [semesters, setSemesters] = useState<any>([])
   const [dataLoading, setDataLoading] = useState(true)
 
@@ -35,11 +35,11 @@ export default function SemestersPage() {
     }
   }, [fetchData, loading])
 
-  useEffect(() => {
-    if (!userData && !loading) {
-      router.push("/sign-in")
-    }
-  }, [userData, loading, router])
+  // useEffect(() => {
+  //   if (!userData && !loading) {
+  //     router.push("/sign-in")
+  //   }
+  // }, [userData, loading, router])
 
   if (loading || dataLoading) {
     return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
@@ -47,9 +47,9 @@ export default function SemestersPage() {
     </div>
   }
 
-  if (!userData) {
-    return null
-  }
+  // if (!userData) {
+  //   return null
+  // }
 
   return (
     <div className="space-y-4 sm:space-y-8">

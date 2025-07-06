@@ -12,11 +12,11 @@ export default function OnboardingPage() {
   const [isCheckingProfile, setIsCheckingProfile] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    if (!loading && !userData) {
-      router.push("/sign-in");
-    }
-  }, [loading, userData, router]);
+  // useEffect(() => {
+    // if (!loading && !userData) {
+  //     router.push("/sign-in");
+  //   }
+  // }, [loading, userData, router]);
 
   useEffect(() => {
     const checkProfile = async () => {
@@ -24,7 +24,6 @@ export default function OnboardingPage() {
         setIsCheckingProfile(true);
         try {
           const profile = await isProfileComplete(userData.userData.id);
-          console.log("profile", profile);
           if (profile) {
             router.push("/dashboard");
           }

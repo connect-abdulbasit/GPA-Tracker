@@ -6,7 +6,6 @@ import {
   ArrowLeft,
   ExternalLink,
   Calendar,
-  BookOpen,
   FileText,
   Github,
   Link2,

@@ -10,19 +10,19 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { GraduationCap, Info } from "lucide-react";
 import { useUserData } from "@/hooks/useUserSync"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { HashLoader } from "react-spinners";
 
 export default function GradeChartPage() {
   const { userData, loading } = useUserData()
-  const router = useRouter()
+  // const router = useRouter()
 
-  useEffect(() => {
-    if (!userData && !loading) {
-      router.push("/sign-in")
-    }
-  }, [userData, loading, router])
+  // useEffect(() => {
+  //   if (!userData && !loading) {
+  //     router.push("/sign-in")
+  //   }
+  // }, [userData, loading, router])
 
   if (loading) {
     return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
@@ -30,9 +30,9 @@ export default function GradeChartPage() {
     </div>  
   }
 
-  if (!userData) {
-    return null
-  }
+  // if (!userData) {
+  //   return null
+  // }
 
   return (
     <div className="space-y-4 sm:space-y-8">

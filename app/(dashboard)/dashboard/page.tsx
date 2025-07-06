@@ -12,7 +12,7 @@ import { HashLoader } from "react-spinners"
 
 export default function DashboardPage() {
   const { userData, loading } = useUserData()
-  const router = useRouter()
+  // const router = useRouter()
   const [dashboardData, setDashboardData] = useState<any>(null)
   const [gpaTrendData, setGpaTrendData] = useState<any>(null)
   const [courseData, setCourseData] = useState<any>(null)
@@ -42,11 +42,11 @@ export default function DashboardPage() {
     }
   }, [userData, loading])
 
-  useEffect(() => {
-    if (!userData && !loading) {
-      router.push("/sign-in")
-    }
-  }, [userData, loading, router])
+  // useEffect(() => {
+  //   if (!userData && !loading) {
+  //     router.push("/sign-in")
+  //   }
+  // }, [userData, loading, router])
 
   if (loading || dataLoading) {
     return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
@@ -54,9 +54,9 @@ export default function DashboardPage() {
   </div>
   }
 
-  if (!userData) {
-    return null
-  }
+  // if (!userData) {
+  //   return null
+  // }
 
   return (
     <div className="space-y-4 sm:space-y-8">
