@@ -16,6 +16,7 @@ export async function updateLastLogin(userId: string) {
 export const isProfileComplete = async (userId: string) => {
   try {
     const user = await updateLastLogin(userId)
+    console.log(user)
     return !!user && !!user.university_name && !!user.department
   } catch (error) {
     console.error('Error checking profile completion:', error)

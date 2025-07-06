@@ -162,7 +162,6 @@ interface OnboardingFormProps {
 
 export function OnboardingForm({ session }: OnboardingFormProps) {
   const [loading, setLoading] = useState(false);
-  console.log("loading",loading)
   const [formData, setFormData] = useState({
     universityName: "",
     department: "",

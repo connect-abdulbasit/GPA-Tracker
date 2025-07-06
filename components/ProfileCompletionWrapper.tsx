@@ -1,6 +1,6 @@
- "use client"
+"use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { UserPlus } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -10,12 +10,18 @@ import { useProfileCompletion } from "@/hooks/useUserSync"
 
 export function ProfileCompletionWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+  const pathname = usePathname()
   const { profileComplete, loading } = useProfileCompletion()
   const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
     setIsComplete(profileComplete)
   }, [profileComplete])
+
+  // Don't show profile completion wrapper on onboarding page
+  if (pathname === "/onboarding") {
+    return <>{children}</>
+  }
 
   if (loading) {
     return (
