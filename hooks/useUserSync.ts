@@ -65,7 +65,11 @@ export const useUserRole = () => {
 
 export function useProfileCompletion() {
   const { userData, loading } = useUserData()
+  const { data: session, isPending } = useSession()
   const [profileComplete, setProfileComplete] = useState<boolean>(false)
+  
+  // userLoggedIn should be based on session, not userData
+  const userLoggedIn = !!session?.user?.id
   
   useEffect(() => {
     if (!loading && userData) {
@@ -73,7 +77,7 @@ export function useProfileCompletion() {
     } else if (!loading && !userData) {
       setProfileComplete(false)
     }
-  }, [userData, loading])
+  }, [userData, loading, userLoggedIn])
   
-  return { profileComplete, loading }
+  return { profileComplete, loading: loading || isPending, userLoggedIn }
 }

@@ -11,7 +11,7 @@ import { useProfileCompletion } from "@/hooks/useUserSync"
 export function ProfileCompletionWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const pathname = usePathname()
-  const { profileComplete, loading } = useProfileCompletion()
+  const { profileComplete, loading, userLoggedIn } = useProfileCompletion()
   const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
