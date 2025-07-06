@@ -17,7 +17,6 @@ export default function DashboardPage() {
   const [gpaTrendData, setGpaTrendData] = useState<any>(null)
   const [courseData, setCourseData] = useState<any>(null)
   const [dataLoading, setDataLoading] = useState(true)
-  console.log("userData",userData)
   useEffect(() => {
     const fetchData = async () => {
       if (userData?.id) {
