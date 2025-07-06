@@ -1,3 +1,4 @@
+import { user } from '@/auth-schema'
 import { pgTable, text, timestamp, uuid, integer, real, boolean } from 'drizzle-orm/pg-core'
 
 export const usersTable = pgTable('users', {
@@ -18,7 +19,7 @@ export const usersTable = pgTable('users', {
 
 export const semestersTable = pgTable('semesters', {
   id: uuid('id').defaultRandom().primaryKey(),
-  user_id: text('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+  user_id: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
   name: text('name').notNull(),
   gpa: real('gpa').default(0.00).notNull(),
   total_credits: integer('total_credits').default(0).notNull(),
@@ -31,7 +32,7 @@ export const semestersTable = pgTable('semesters', {
 export const coursesTable = pgTable('courses', {
   id: uuid('id').defaultRandom().primaryKey(),
   semester_id: uuid('semester_id').references(() => semestersTable.id, { onDelete: 'cascade' }).notNull(),
-  user_id: text('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+  user_id: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
   name: text('name').notNull(),
   credit_hours: integer('credit_hours').notNull(),
   gpa: real('gpa').default(0.00).notNull(),
@@ -43,7 +44,7 @@ export const coursesTable = pgTable('courses', {
 
 export const resourcesTable = pgTable('resources', {
   id: uuid('id').defaultRandom().primaryKey(),
-  user_id: text('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+  user_id: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
   title: text('title').notNull(),
   description: text('description'),
   resource_type: text('resource_type', { enum: ['link', 'github', 'pdf', 'document', 'video', 'image', 'other'] }).notNull(),
@@ -56,7 +57,7 @@ export const resourcesTable = pgTable('resources', {
 export const assessmentsTable = pgTable('assessments', {
   id: uuid('id').defaultRandom().primaryKey(),
   course_id: uuid('course_id').references(() => coursesTable.id, { onDelete: 'cascade' }).notNull(),
-  user_id: text('user_id').references(() => usersTable.id, { onDelete: 'cascade' }).notNull(),
+  user_id: text('user_id').references(() => user.id, { onDelete: 'cascade' }).notNull(),
   semester_id: uuid('semester_id').references(() => semestersTable.id, { onDelete: 'cascade' }).notNull(),
   name: text('name').notNull(),
   weightage: real('weightage').notNull(),
