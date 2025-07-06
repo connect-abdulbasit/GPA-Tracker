@@ -17,7 +17,10 @@ export function ProfileCompletionWrapper({ children }: { children: React.ReactNo
   useEffect(() => {
     setIsComplete(profileComplete)
   }, [profileComplete])
-
+  
+  if (!userLoggedIn && !loading) {
+    router.push("/sign-in")
+  }
   // Don't show profile completion wrapper on onboarding page
   if (pathname === "/onboarding") {
     return <>{children}</>
