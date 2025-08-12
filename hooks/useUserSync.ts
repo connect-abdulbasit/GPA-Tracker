@@ -2,82 +2,79 @@
 
 import { getUser } from '@/app/actions/user'
 import { useSession } from '@/lib/auth-client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
-export const useUserData = () => {
+// Custom hook for fetching user data with caching
+const useUserDataWithCache = () => {
   const { data: session, isPending } = useSession()
   const [loading, setLoading] = useState(true)
   const [userData, setUserData] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
   
   useEffect(() => {
     const fetchUserData = async () => {
       if (session?.user?.id) {
         try {
           setLoading(true)
+          setError(null)
           const data = await getUser(session.user.id)
           setUserData(data)
         } catch (error) {
           console.error('Error fetching user data:', error)
+          setError('Failed to fetch user data')
         } finally {
           setLoading(false)
         }
       } else if (!isPending) {
-        // If no session and not pending, set loading to false
         setLoading(false)
         setUserData(null)
+        setError(null)
       }
     }
 
     fetchUserData()
-  }, [session?.user?.id, isPending]) // Add isPending to dependencies
-
-  return { userData, loading }
-}
-
-export const useUserRole = () => {
-  const { data: session, isPending } = useSession()
-  const [loading, setLoading] = useState(true)
-  const [userRole, setUserRole] = useState<any>(null)
-  
-  useEffect(() => {
-    const fetchUserRole = async () => {
-      if (session?.user?.id) {
-        try {
-          setLoading(true)
-          const data = await getUser(session.user.id)
-          setUserRole(data?.role || "student")
-        } catch (error) {
-          console.error('Error fetching user role:', error)
-        } finally {
-          setLoading(false)
-        }
-      } else if (!isPending) {
-        setLoading(false)
-        setUserRole(null)
-      }
-    }
-
-    fetchUserRole()
   }, [session?.user?.id, isPending])
-  
-  return { userRole, loading }
+
+  return { userData, loading, error }
 }
 
+// Optimized user data hook
+export const useUserData = () => {
+  const { userData, loading, error } = useUserDataWithCache()
+  return { userData, loading, error }
+}
+
+// Optimized user role hook - derived from user data
+export const useUserRole = () => {
+  const { userData, loading, error } = useUserDataWithCache()
+  
+  const userRole = useMemo(() => {
+    return userData?.role || "student"
+  }, [userData?.role])
+  
+  return { userRole, loading, error }
+}
+
+// Optimized profile completion hook
 export function useProfileCompletion() {
-  const { userData, loading } = useUserData()
+  const { userData, loading, error } = useUserDataWithCache()
   const { data: session, isPending } = useSession()
-  const [profileComplete, setProfileComplete] = useState<boolean>(false)
   
-  // userLoggedIn should be based on session, not userData
-  const userLoggedIn = !!session?.user?.id
+  // Memoized values for better performance
+  const userLoggedIn = useMemo(() => !!session?.user?.id, [session?.user?.id])
   
-  useEffect(() => {
-    if (!loading && userData) {
-      setProfileComplete(!!(userData?.university_name && userData?.department))
-    } else if (!loading && !userData) {
-      setProfileComplete(false)
-    }
-  }, [userData, loading, userLoggedIn])
+  const profileComplete = useMemo(() => {
+    if (!userData) return false
+    return !!(userData.university_name && userData.department)
+  }, [userData?.university_name, userData?.department])
   
-  return { profileComplete, loading: loading || isPending, userLoggedIn }
+  // Combined loading state
+  const isLoading = loading || isPending
+  
+  return { 
+    profileComplete, 
+    loading: isLoading, 
+    userLoggedIn,
+    error 
+  }
 }

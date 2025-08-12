@@ -8,15 +8,9 @@ import { useUserData } from "@/hooks/useUserSync";
 import { HashLoader } from "react-spinners";
 
 export default function OnboardingPage() {
-  const { userData, loading } = useUserData();
+  const { userData, loading } = useUserData()
   const [isCheckingProfile, setIsCheckingProfile] = useState(false);
   const router = useRouter();
-
-  // useEffect(() => {
-    // if (!loading && !userData) {
-  //     router.push("/sign-in");
-  //   }
-  // }, [loading, userData, router]);
 
   useEffect(() => {
     const checkProfile = async () => {

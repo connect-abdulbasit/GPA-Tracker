@@ -2,14 +2,12 @@
 import { GoalTracker } from "@/components/goal-tracker"
 // import { AdminRouteGuard } from "@/components/admin-route-guard"
 import { useUserData } from "@/hooks/useUserSync"
-// import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { fetchSemesters } from "@/app/actions/semester"
 import { HashLoader } from "react-spinners"
 
 export default function ForecastPage() {
   const { userData, loading } = useUserData()
-  // const router = useRouter()
   const [semesters, setSemesters] = useState<any>(null)
   const [dataLoading, setDataLoading] = useState(true)
 
@@ -32,21 +30,11 @@ export default function ForecastPage() {
     }
   }, [userData, loading])
 
-  // useEffect(() => {
-  //   if (!userData && !loading) {
-  //     router.push("/sign-in")
-  //   }
-  // }, [userData, loading, router])
-
   if (loading || dataLoading) {
     return <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/80">
       <HashLoader color="#4F46E5" />
     </div>
   }
-
-  // if (!userData) {
-  //   return null
-  // }
 
   return (
     // <AdminRouteGuard>
