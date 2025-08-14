@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { DeveloperProfile } from "@/components/developer-profile"
 
 export default function HomePage() {
 
@@ -19,6 +20,7 @@ export default function HomePage() {
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
               <ThemeToggle />
+              <DeveloperProfile variant="desktop" />
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex" asChild>
                 <Link href="/sign-in">Sign In</Link>
               </Button>
@@ -224,9 +226,14 @@ export default function HomePage() {
             <GraduationCap className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
             <span className="text-lg sm:text-xl font-bold">GPA Tracker</span>
           </div>
-          <p className="text-center text-sm sm:text-base text-gray-600 dark:text-gray-400">
-            © 2024 GPA Tracker. Built for students, by students.
-          </p>
+          <div className="text-center space-y-4">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-400">
+              © 2024 GPA Tracker. Built for students, by students.
+            </p>
+            <div className="flex items-center justify-center space-x-4">
+              <DeveloperProfile variant="desktop" />
+            </div>
+          </div>
         </div>
       </footer>
     </div>

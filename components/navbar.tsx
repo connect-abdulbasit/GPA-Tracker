@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DeveloperProfile } from "@/components/developer-profile"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", disabled: false, badge: undefined },
@@ -83,6 +84,7 @@ export function Navbar() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+              <DeveloperProfile />
               <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
                 <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                 <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -168,6 +170,9 @@ export function Navbar() {
                       </div>
                     </Link>
                   ))}
+                  <div className="border-t pt-2 mt-2">
+                    <DeveloperProfile variant="mobile" />
+                  </div>
                 </motion.div>
               </div>
             </motion.div>
