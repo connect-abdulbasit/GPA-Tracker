@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DeveloperProfile } from "@/components/developer-profile"
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", disabled: false, badge: undefined },
@@ -170,6 +171,9 @@ export function Navbar() {
                   ))}
                 </motion.div>
               </div>
+              <div className="border-t pt-2 mt-2">
+                    <DeveloperProfile variant="mobile" />
+                  </div>
             </motion.div>
           )}
         </AnimatePresence>
