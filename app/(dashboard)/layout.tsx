@@ -4,6 +4,9 @@ import { Suspense } from "react"
 import Loading from "./loading"
 import { ProfileCompletionWrapper } from "@/components/ProfileCompletionWrapper"
 
+// Force dynamic rendering for all dashboard pages
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardLayout({
   children,
 }: {
