@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // eslint: {
-  //   ignoreDuringBuilds: true,
-  // },
-  // typescript: {
-  //   ignoreBuildErrors: true,
-  // },
+  experimental: {
+    serverComponentsExternalPackages: ['better-auth'],
+    serverActions: {
+      allowedOrigins: ['localhost:3000', 'gpa-tracker-sigma.vercel.app'],
+    },
+  },
   images: {
     unoptimized: true,
   },
