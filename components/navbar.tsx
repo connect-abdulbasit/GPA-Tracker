@@ -84,6 +84,7 @@ export function Navbar() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
+            <DeveloperProfile />
               <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
                 <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
                 <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
@@ -171,9 +172,6 @@ export function Navbar() {
                   ))}
                 </motion.div>
               </div>
-              <div className="border-t pt-2 mt-2">
-                    <DeveloperProfile variant="mobile" />
-                  </div>
             </motion.div>
           )}
         </AnimatePresence>
