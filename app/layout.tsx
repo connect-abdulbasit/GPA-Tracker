@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 import { Suspense } from "react";
 import Loading from "./loading";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -39,6 +40,7 @@ export default function RootLayout({
               </Suspense>
             <Toaster />
           </ThemeProvider>
+          <Analytics />
       </body>
     </html>
   );
