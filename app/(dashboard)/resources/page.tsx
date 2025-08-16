@@ -17,7 +17,7 @@ console.log(resourcesData)
     const fetchData = async () => {
       if (userData?.id) {
         try {
-          const { resources, totalCount, totalPages } = await fetchResources(userData.id, 1, 9, "", "all")
+          const { resources, totalCount, totalPages } = await fetchResources(1, 9, "", "all")
           setResourcesData({ resources, totalCount, totalPages })
         } catch (error) {
           console.error('Error fetching resources:', error)
