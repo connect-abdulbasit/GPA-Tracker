@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
 import { ExternalLink, Github, Linkedin, Mail, Code, Heart } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
@@ -23,6 +22,11 @@ export function DeveloperProfile({ variant = "desktop", className }: DeveloperPr
 
   const handleGithubClick = () => {
     window.open("https://github.com/connect-abdulbasit", "_blank")
+    setIsOpen(false)
+  }
+
+  const handleEmailClick = () => {
+    window.open("mailto:contact.abdulbasit.cs@gmail.com", "_blank")
     setIsOpen(false)
   }
 
@@ -81,57 +85,6 @@ export function DeveloperProfile({ variant = "desktop", className }: DeveloperPr
                 Abdul Basit
               </h3>
               <p className="text-sm text-muted-foreground font-medium">Full-Stack Developer & AI Enthusiast</p>
-              <div className="flex flex-wrap gap-1">
-                <Badge variant="secondary" className="text-xs bg-primary/10 text-primary border-primary/20">React</Badge>
-                <Badge variant="secondary" className="text-xs bg-blue-500/10 text-blue-600 border-blue-500/20">Next.js</Badge>
-                <Badge variant="secondary" className="text-xs bg-purple-500/10 text-purple-600 border-purple-500/20">TypeScript</Badge>
-                <Badge variant="secondary" className="text-xs bg-green-500/10 text-green-600 border-green-500/20">Node.js</Badge>
-                <Badge variant="secondary" className="text-xs bg-orange-500/10 text-orange-600 border-orange-500/20">Supabase</Badge>
-                <Badge variant="secondary" className="text-xs bg-pink-500/10 text-pink-600 border-pink-500/20">tRPC</Badge>
-                <Badge variant="secondary" className="text-xs bg-yellow-500/10 text-yellow-600 border-yellow-500/20">Python</Badge>
-                <Badge variant="secondary" className="text-xs bg-indigo-500/10 text-indigo-600 border-indigo-500/20">JavaScript</Badge>
-              </div>
-            </div>
-          </div>
-
-                    {/* About */}
-          <div className="space-y-2 p-3 bg-muted/30 rounded-lg border">
-            <h4 className="font-semibold text-base flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full"></div>
-              About
-            </h4>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Passionate Full-Stack Developer with a strong focus on backend development and modern web technologies. 
-              Currently pursuing a Bachelor's in Computer Science. I love turning ideas into real-world web applications, 
-              building scalable systems, and solving complex problems using cutting-edge technologies. 
-              This GPA Tracker is built with React, Next.js, TypeScript, Supabase, tRPC, Python, and Better Auth, 
-              providing students with powerful tools to track and improve their academic performance.
-            </p>
-          </div>
-
-          {/* Key Features */}
-          <div className="space-y-2 p-3 bg-gradient-to-r from-green-500/5 to-blue-500/5 rounded-lg border border-green-500/10">
-            <h4 className="font-semibold text-base flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              Key Features
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <div className="flex items-center gap-2 p-2 bg-green-500/10 rounded-md border border-green-500/20">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-medium text-green-700 dark:text-green-400">GPA Tracking & Analytics</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-blue-500/10 rounded-md border border-blue-500/20">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span className="text-sm font-medium text-blue-700 dark:text-blue-400">Semester Management</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-purple-500/10 rounded-md border border-purple-500/20">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <span className="text-sm font-medium text-purple-700 dark:text-purple-400">Course & Assessment Tracking</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-orange-500/10 rounded-md border border-orange-500/20">
-                <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                <span className="text-sm font-medium text-orange-700 dark:text-orange-400">Study Resources</span>
-              </div>
             </div>
           </div>
 
@@ -161,16 +114,17 @@ export function DeveloperProfile({ variant = "desktop", className }: DeveloperPr
                 <ExternalLink className="h-3 w-3 ml-1" />
               </Button>
             </div>
-          </div>
-
-          {/* Footer */}
-          <div className="pt-3 border-t border-primary/10">
-            <p className="text-xs text-center text-muted-foreground font-medium">
-              GPA Tracker v1.0 • Built with Next.js & Better Auth
-            </p>
-            <p className="text-xs text-center text-muted-foreground mt-1">
-              Built with Modern Web Technologies & Best Practices
-            </p>
+            <div className="flex gap-2">
+              <Button 
+                onClick={handleEmailClick}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white border-red-600 hover:border-red-700 transition-all duration-200"
+                size="sm"
+              >
+                <Mail className="h-4 w-4 mr-2" />
+                Email
+                <ExternalLink className="h-3 w-3 ml-1" />
+              </Button>
+            </div>
           </div>
         </div>
       </DialogContent>
