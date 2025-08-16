@@ -35,18 +35,18 @@ export function ResourcesList({ initialResources, initialTotalCount, initialTota
   }, [searchQuery, activeTab])
 
   const handleSearch = async () => {
-    // setIsLoading(true)
+    setIsLoading(true)
     try {
       const result = await fetchResources(
-        "", // userId will be handled by the server
-        currentPage,
-        9, // pageSize
+        1, 
+        9,
         searchQuery,
         activeTab
       )
       setResources(result.resources)
       setTotalPages(result.totalPages)
       setTotalCount(result.totalCount)
+      setCurrentPage(1) // Reset to first page
     } catch (error) {
       console.error("Error fetching resources:", error)
     } finally {
@@ -56,10 +56,9 @@ export function ResourcesList({ initialResources, initialTotalCount, initialTota
 
   const handlePageChange = async (newPage: number) => {
     setCurrentPage(newPage)
-    // setIsLoading(true)
+    setIsLoading(true)
     try {
       const result = await fetchResources(
-        "", // userId will be handled by the server
         newPage,
         9,
         searchQuery,
@@ -75,23 +74,8 @@ export function ResourcesList({ initialResources, initialTotalCount, initialTota
     }
   }
 
-  const filteredResources = resources.filter((resource) => {
-    // Filter by search query
-    const matchesSearch =
-      resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (resource.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
-      resource.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (resource.course?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?? false) ||
-      (resource.semester?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?? false)
-
-    // Filter by resource type
-    const matchesType = activeTab === "all" || resource.resource_type === activeTab
-
-    return matchesSearch && matchesType
-  })
-
   // Group resources by semester
-  const resourcesBySemester = filteredResources.reduce<Record<string, any[]>>((acc, resource) => {
+  const resourcesBySemester = resources.reduce<Record<string, any[]>>((acc, resource) => {
     const semesterName = resource.semester?.name || "Uncategorized"
     if (!acc[semesterName]) {
       acc[semesterName] = []

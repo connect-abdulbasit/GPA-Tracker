@@ -10,10 +10,9 @@ import { HashLoader } from "react-spinners"
 
 export default function ResourcesPage() {
   const { userData, loading } = useUserData()
-  // const router = useRouter()
   const [resourcesData, setResourcesData] = useState<any>(null)
   const [dataLoading, setDataLoading] = useState(true)
-
+console.log(resourcesData)
   useEffect(() => {
     const fetchData = async () => {
       if (userData?.id) {

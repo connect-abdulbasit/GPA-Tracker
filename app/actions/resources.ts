@@ -11,30 +11,46 @@ interface Resource {
   url: string;
   tags: string[];
 }
-export const fetchResources = async (userId: string, page: number = 1, pageSize: number = 9, searchQuery: string = "",type: string = "all") => {
+export const fetchResources = async ( page: number = 1, pageSize: number = 9, searchQuery: string = "", type: string = "all") => {
   const offset = (page - 1) * pageSize;
   
-  // Base query conditions
-  const conditions = searchQuery ? or(
-    type === "all" ? undefined : eq(resourcesTable.resource_type, type as "link" | "github" | "pdf" | "document" | "video" | "image" | "other"),
-    ilike(resourcesTable.title, `%${searchQuery}%`),
-    ilike(resourcesTable.description, `%${searchQuery}%`)
-  ) : undefined;
+  // Build conditions array
+  const conditions = [];
+  
+  // Add type filter if not "all"
+  if (type !== "all") {
+    conditions.push(eq(resourcesTable.resource_type, type as "link" | "github" | "pdf" | "document" | "video" | "image" | "other"));
+  }
+  
+  // Add search conditions if searchQuery exists
+  if (searchQuery) {
+    conditions.push(
+      or(
+        ilike(resourcesTable.title, `%${searchQuery}%`),
+        ilike(resourcesTable.description, `%${searchQuery}%`)
+      )
+    );
+  }
+  
+  // Combine all conditions
+  const whereCondition = conditions.length > 0 ? conditions.reduce((acc, condition) => {
+    if (acc === null) return condition;
+    return sql`${acc} AND ${condition}`;
+  }, null as any) : undefined;
   
   // Get total count
   const totalCount = await db
     .select({ count: sql<number>`count(*)` })
     .from(resourcesTable)
-    .where(conditions)
+    .where(whereCondition)
     .execute();
   
-  // Get paginated data with priority for userId
+  // Get paginated data with proper ordering
   const resources = await db
     .select()
     .from(resourcesTable)
-    .where(conditions)
+    .where(whereCondition)
     .orderBy(
-      sql`CASE WHEN user_id = ${userId} THEN 1 ELSE 0 END DESC`,
       desc(resourcesTable.created_at)
     ) 
     .limit(pageSize)
